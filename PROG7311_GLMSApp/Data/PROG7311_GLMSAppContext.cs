@@ -15,5 +15,7 @@ namespace PROG7311_GLMSApp.Data
         }
 
         public DbSet<PROG7311_GLMSApp.Models.Client> Client { get; set; } = default!;
+        public DbSet<PROG7311_GLMSApp.Models.Contract> Contract { get; set; } = default!;
+        public DbSet<PROG7311_GLMSApp.Models.ServiceRequest> ServiceRequest { get; set; } = default!;
     }
 }
