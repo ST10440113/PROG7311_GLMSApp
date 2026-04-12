@@ -50,6 +50,7 @@ namespace PROG7311_GLMSApp.Controllers
         // GET: Clients/Create
         public IActionResult Create()
         {
+            
             return View();
         }
 

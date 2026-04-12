@@ -48,9 +48,9 @@ namespace PROG7311_GLMSApp.Controllers
         }
 
         // GET: Contracts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-           
+            ViewBag.ClientId = await _contractService.ClientNames();
             return View();
         }
 
@@ -59,14 +59,14 @@ namespace PROG7311_GLMSApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId,FullName")] Contract contract)
+        public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId")] Contract contract)
         {
             if (ModelState.IsValid)
             {
                 await _contractService.CreateAsync(contract);
                 return RedirectToAction(nameof(Index));
             }
-
+            ViewBag.ClientId = await _contractService.ClientNames();
             return View(contract);
         }
 
@@ -77,7 +77,7 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 return NotFound();
             }
-            
+            ViewBag.ClientId = await _contractService.ClientNames();
             var contract = await _contractService.GetContractByIdAsync(id.Value);
             if (contract == null)
             {
@@ -92,7 +92,7 @@ namespace PROG7311_GLMSApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId,FullName")] Contract contract)
+        public async Task<IActionResult> Edit(int id, [Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId")] Contract contract)
         {
             if (id != contract.ContractId)
             {
@@ -118,7 +118,7 @@ namespace PROG7311_GLMSApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-           
+            ViewBag.ClientId = await _contractService.ClientNames();
             return View(contract);
         }
 
@@ -129,13 +129,13 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.ClientId = await _contractService.ClientNames();
             var contract = await _contractService.GetContractByIdAsync(id.Value);
             if (contract == null)
             {
                 return NotFound();
             }
-
+            ViewBag.ClientId = await _contractService.ClientNames();
             return View(contract);
         }
 

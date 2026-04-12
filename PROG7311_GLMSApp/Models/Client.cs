@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PROG7311_GLMSApp.Models
 {
@@ -15,6 +16,6 @@ namespace PROG7311_GLMSApp.Models
 
         public string Region { get; set; }
 
-
+        [NotMapped] public string? FullName => $"{FirstName} {LastName}";
     }
 }

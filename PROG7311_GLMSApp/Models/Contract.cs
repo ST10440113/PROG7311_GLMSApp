@@ -17,6 +17,6 @@ namespace PROG7311_GLMSApp.Models
       public int ClientId { get; set; }
         public Client Client { get; set; }
 
-        public string FullName => $"{Client.FirstName} {Client.LastName}";
+       
     }
 }

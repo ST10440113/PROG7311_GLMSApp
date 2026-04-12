@@ -63,5 +63,12 @@ namespace PROG7311_GLMSApp.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task< SelectList> ClientNames()
+        {
+            var clients = await _context.Client.ToListAsync();
+            return new SelectList(clients, "ClientId", "FullName");
+
+        }
     }
 }
