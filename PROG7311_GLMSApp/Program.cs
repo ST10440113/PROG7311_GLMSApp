@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PROG7311_GLMSApp.Data;
+using PROG7311_GLMSApp.Services;
+using System.Diagnostics.Contracts;
 namespace PROG7311_GLMSApp
 {
     public class Program
@@ -13,6 +15,11 @@ namespace PROG7311_GLMSApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<ContractService>();
+            builder.Services.AddScoped<ClientService>();
+            builder.Services.AddScoped<ServiceRequestService>();
+            builder.Services.AddScoped<IContractFactory, ContractFactory>();
+
 
             var app = builder.Build();
 
