@@ -16,5 +16,7 @@ namespace PROG7311_GLMSApp.Models
         [ForeignKey("ClientId")] 
       public int ClientId { get; set; }
         public Client Client { get; set; }
+
+        public string FullName => $"{Client.FirstName} {Client.LastName}";
     }
 }
