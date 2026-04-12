@@ -7,23 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
+using PROG7311_GLMSApp.Services;
 
 namespace PROG7311_GLMSApp.Controllers
 {
     public class ContractsController : Controller
     {
         private readonly PROG7311_GLMSAppContext _context;
+        private readonly ContractService _contractService;
 
-        public ContractsController(PROG7311_GLMSAppContext context)
+        public ContractsController(PROG7311_GLMSAppContext context, ContractService contractService)
         {
             _context = context;
+            _contractService = contractService;
         }
 
         // GET: Contracts
         public async Task<IActionResult> Index()
         {
-            var pROG7311_GLMSAppContext = _context.Contract.Include(c => c.Client);
-            return View(await pROG7311_GLMSAppContext.ToListAsync());
+            var allContracts = await _contractService.GetAllContractsAsync();
+            return View(allContracts);
         }
 
         // GET: Contracts/Details/5
@@ -34,9 +37,8 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var contract = await _context.Contract
-                .Include(c => c.Client)
-                .FirstOrDefaultAsync(m => m.ContractId == id);
+            var contract = await _contractService.GetContractByIdAsync(id.Value);
+
             if (contract == null)
             {
                 return NotFound();
@@ -48,7 +50,7 @@ namespace PROG7311_GLMSApp.Controllers
         // GET: Contracts/Create
         public IActionResult Create()
         {
-            ViewData["ClientId"] = new SelectList(_context.Client, "ClientId", "ClientId");
+           
             return View();
         }
 
@@ -61,11 +63,10 @@ namespace PROG7311_GLMSApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(contract);
-                await _context.SaveChangesAsync();
+                await _contractService.CreateAsync(contract);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClientId"] = new SelectList(_context.Client, "ClientId", "ClientId", contract.ClientId);
+
             return View(contract);
         }
 
@@ -76,13 +77,13 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 return NotFound();
             }
-
-            var contract = await _context.Contract.FindAsync(id);
+            
+            var contract = await _contractService.GetContractByIdAsync(id.Value);
             if (contract == null)
             {
                 return NotFound();
             }
-            ViewData["ClientId"] = new SelectList(_context.Client, "ClientId", "ClientId", contract.ClientId);
+            
             return View(contract);
         }
 
@@ -102,12 +103,12 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 try
                 {
-                    _context.Update(contract);
-                    await _context.SaveChangesAsync();
+                  await _contractService.UpdateAsync(contract);  
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContractExists(contract.ContractId))
+                    var contractExists = await _contractService.GetContractByIdAsync(contract.ContractId);
+                    if (contractExists == null)
                     {
                         return NotFound();
                     }
@@ -118,7 +119,7 @@ namespace PROG7311_GLMSApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClientId"] = new SelectList(_context.Client, "ClientId", "ClientId", contract.ClientId);
+           
             return View(contract);
         }
 
@@ -130,9 +131,7 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var contract = await _context.Contract
-                .Include(c => c.Client)
-                .FirstOrDefaultAsync(m => m.ContractId == id);
+            var contract = await _contractService.GetContractByIdAsync(id.Value);
             if (contract == null)
             {
                 return NotFound();
@@ -146,19 +145,16 @@ namespace PROG7311_GLMSApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contract = await _context.Contract.FindAsync(id);
+            var contract = await _contractService.GetContractByIdAsync(id);
+
             if (contract != null)
             {
-                _context.Contract.Remove(contract);
+               await _contractService.Delete(contract.ContractId);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ContractExists(int id)
-        {
-            return _context.Contract.Any(e => e.ContractId == id);
-        }
+       
     }
 }
