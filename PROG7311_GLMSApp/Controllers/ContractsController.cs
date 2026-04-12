@@ -59,7 +59,7 @@ namespace PROG7311_GLMSApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId")] Contract contract)
+        public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId,FullName")] Contract contract)
         {
             if (ModelState.IsValid)
             {
@@ -92,7 +92,7 @@ namespace PROG7311_GLMSApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId")] Contract contract)
+        public async Task<IActionResult> Edit(int id, [Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId,FullName")] Contract contract)
         {
             if (id != contract.ContractId)
             {
@@ -107,8 +107,7 @@ namespace PROG7311_GLMSApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    var contractExists = await _contractService.GetContractByIdAsync(contract.ContractId);
-                    if (contractExists == null)
+                    if (!_contractService.ContractExists(contract.ContractId))
                     {
                         return NotFound();
                     }

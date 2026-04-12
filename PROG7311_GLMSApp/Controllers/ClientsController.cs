@@ -7,23 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
+using PROG7311_GLMSApp.Services;
 
 namespace PROG7311_GLMSApp.Controllers
 {
     public class ClientsController : Controller
     {
         private readonly PROG7311_GLMSAppContext _context;
+        private readonly ClientService _clientService;
 
-        public ClientsController(PROG7311_GLMSAppContext context)
+        public ClientsController(PROG7311_GLMSAppContext context,ClientService clientService)
         {
             _context = context;
+            _clientService = clientService;
         }
 
         // GET: Clients
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Client.ToListAsync());
+            var allClients = await _clientService.GetAllClientsAsync();
+            return View(allClients);
         }
+        
 
         // GET: Clients/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -33,8 +38,7 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client
-                .FirstOrDefaultAsync(m => m.ClientId == id);
+            var client = await _clientService.GetClientByIdAsync(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -58,8 +62,7 @@ namespace PROG7311_GLMSApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
+                await _clientService.CreateAsync(client);
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
@@ -73,7 +76,7 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client.FindAsync(id);
+            var client = await _clientService.GetClientByIdAsync(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -97,12 +100,12 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 try
                 {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
+                  await _clientService.UpdateAsync(client); 
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClientExists(client.ClientId))
+                    
+                    if (!_clientService.ClientExists(client.ClientId))
                     {
                         return NotFound();
                     }
@@ -124,8 +127,7 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client
-                .FirstOrDefaultAsync(m => m.ClientId == id);
+            var client = await _clientService.GetClientByIdAsync(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -139,19 +141,11 @@ namespace PROG7311_GLMSApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = await _context.Client.FindAsync(id);
-            if (client != null)
-            {
-                _context.Client.Remove(client);
-            }
-
-            await _context.SaveChangesAsync();
+            var client = await _clientService.GetClientByIdAsync(id);
+           
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ClientExists(int id)
-        {
-            return _context.Client.Any(e => e.ClientId == id);
-        }
+        
     }
 }
