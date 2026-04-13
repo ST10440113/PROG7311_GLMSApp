@@ -14,6 +14,6 @@ namespace PROG7311_GLMSApp.Models
 
         [ForeignKey("ContractId")] 
         public int ContractId { get; set; }
-        public Contract Contract { get; set; }
+        public Contract? Contract { get; set; }
     }
 }
