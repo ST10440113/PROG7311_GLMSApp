@@ -7,26 +7,29 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
+using PROG7311_GLMSApp.Services;
 
 namespace PROG7311_GLMSApp.Controllers
 {
     public class ServiceRequestsController : Controller
     {
-        private readonly PROG7311_GLMSAppContext _context;
+        
+        private readonly ServiceRequestService _serviceRequestService;
 
-        public ServiceRequestsController(PROG7311_GLMSAppContext context)
+        public ServiceRequestsController(ServiceRequestService serviceRequestService)
         {
-            _context = context;
+           
+            _serviceRequestService = serviceRequestService;
         }
 
         // GET: ServiceRequests
         public async Task<IActionResult> Index()
         {
-            var pROG7311_GLMSAppContext = _context.ServiceRequest.Include(s => s.Contract);
-            return View(await pROG7311_GLMSAppContext.ToListAsync());
+            var allServiceRequests = await _serviceRequestService.GetAllServiceRequestsAsync();
+            return View(allServiceRequests);
         }
 
-        // GET: ServiceRequests/Details/5
+        // GET: ServiceRequests/Details/
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,9 +37,7 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var serviceRequest = await _context.ServiceRequest
-                .Include(s => s.Contract)
-                .FirstOrDefaultAsync(m => m.ServiceRequestId == id);
+            var serviceRequest = _serviceRequestService.GetServiceRequestByIdAsync(id.Value);
             if (serviceRequest == null)
             {
                 return NotFound();
@@ -48,8 +49,8 @@ namespace PROG7311_GLMSApp.Controllers
         // GET: ServiceRequests/Create
         public IActionResult Create()
         {
-            ViewData["ContractId"] = new SelectList(_context.Contract, "ContractId", "ContractId");
-            return View();
+           var contracts = _serviceRequestService.GetContracts();
+            return View(contracts);
         }
 
         // POST: ServiceRequests/Create
@@ -61,14 +62,14 @@ namespace PROG7311_GLMSApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(serviceRequest);
-                await _context.SaveChangesAsync();
+               await _serviceRequestService.Create(serviceRequest);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ContractId"] = new SelectList(_context.Contract, "ContractId", "ContractId", serviceRequest.ContractId);
+            var contracts = await _serviceRequestService.GetContracts();
+            ViewData["ContractId"] = contracts;
             return View(serviceRequest);
         }
-
+       
         // GET: ServiceRequests/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -77,12 +78,12 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var serviceRequest = await _context.ServiceRequest.FindAsync(id);
+            var serviceRequest = await _serviceRequestService.GetServiceRequestByIdAsync(id.Value);
             if (serviceRequest == null)
             {
                 return NotFound();
             }
-            ViewData["ContractId"] = new SelectList(_context.Contract, "ContractId", "ContractId", serviceRequest.ContractId);
+            ViewData["ContractId"] = await _serviceRequestService.GetContractsByServiceRequestId(serviceRequest.ServiceRequestId);
             return View(serviceRequest);
         }
 
@@ -102,12 +103,12 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 try
                 {
-                    _context.Update(serviceRequest);
-                    await _context.SaveChangesAsync();
+                 await  _serviceRequestService.UpdateAsync(serviceRequest);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ServiceRequestExists(serviceRequest.ServiceRequestId))
+                    var existingServiceRequest = _serviceRequestService.ServiceRequestExists(serviceRequest.ServiceRequestId);
+                    if (!existingServiceRequest)
                     {
                         return NotFound();
                     }
@@ -118,7 +119,7 @@ namespace PROG7311_GLMSApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ContractId"] = new SelectList(_context.Contract, "ContractId", "ContractId", serviceRequest.ContractId);
+            ViewData["ContractId"] = await _serviceRequestService.GetContractsByServiceRequestId(serviceRequest.ServiceRequestId);
             return View(serviceRequest);
         }
 
@@ -130,9 +131,7 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var serviceRequest = await _context.ServiceRequest
-                .Include(s => s.Contract)
-                .FirstOrDefaultAsync(m => m.ServiceRequestId == id);
+            var serviceRequest = await _serviceRequestService.GetServiceRequestByIdAsync(id.Value);
             if (serviceRequest == null)
             {
                 return NotFound();
@@ -146,19 +145,10 @@ namespace PROG7311_GLMSApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var serviceRequest = await _context.ServiceRequest.FindAsync(id);
-            if (serviceRequest != null)
-            {
-                _context.ServiceRequest.Remove(serviceRequest);
-            }
-
-            await _context.SaveChangesAsync();
+           await _serviceRequestService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ServiceRequestExists(int id)
-        {
-            return _context.ServiceRequest.Any(e => e.ServiceRequestId == id);
-        }
+        
     }
-}
+}  
