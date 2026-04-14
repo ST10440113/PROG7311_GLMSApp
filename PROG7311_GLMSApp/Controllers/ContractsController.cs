@@ -63,8 +63,15 @@ namespace PROG7311_GLMSApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _contractService.CreateAsync(contract);
-                return RedirectToAction(nameof(Index));
+                try {
+                    await _contractService.CreateAsync(contract);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ArgumentException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
+
             }
             ViewBag.ClientId = await _contractService.ClientNames();
             return View(contract);

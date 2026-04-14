@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
@@ -24,13 +25,21 @@ namespace PROG7311_GLMSApp.Services
             {
                 StartDate = contract.StartDate,
                 EndDate = contract.EndDate,
-                Status = contract.Status,
+                Status = "Draft",
                 ServiceLevel = SL,
                 ClientId = contract.ClientId
 
             };
-            _context.Add(newContract);
-            await _context.SaveChangesAsync();
+            if (newContract.EndDate < newContract.StartDate)
+            {
+                throw new ArgumentException("End date cannot be earlier than start date");
+            }
+            else
+            {
+                _context.Add(newContract);
+                await _context.SaveChangesAsync();
+            }
+               
         }
 
         public async Task<List<Contract>> GetAllContractsAsync()
