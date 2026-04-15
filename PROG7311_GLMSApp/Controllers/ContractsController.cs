@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
@@ -23,12 +24,30 @@ namespace PROG7311_GLMSApp.Controllers
         }
 
         // GET: Contracts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateOnly? startDate, DateOnly? endDate,string status)
         {
             var allContracts = await _contractService.GetAllContractsAsync();
+
+            if (startDate != null || endDate != null)
+            {
+                if (startDate != null & endDate != null)
+                {
+                    _contractService.FilterByDateRange(startDate, endDate);
+                }
+                else
+                {
+                    TempData["Error"] = "Both start date and end date must be provided for filtering";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                _contractService.FilterByStatus(status);
+            }
+             
             return View(allContracts);
         }
-
+        
         // GET: Contracts/Details/5
         public async Task<IActionResult> Details(int? id)
         {

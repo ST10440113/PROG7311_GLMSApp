@@ -3,9 +3,39 @@
 @{
     ViewData["Title"] = "Index";
 }
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible">
+        @TempData["Error"]
+        <button class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
-<h1>Index</h1>
+}
+<h1>Contracts</h1>
+<form asp-controller="Contracts" asp-action="Index" >
+    <div class="form-control" style="display:flex; justify-content:space-between; align-items:center; background-color:teal; padding: 10px 20px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <label for="startDate" style="color:white;">Start Date:</label>
+            <input type="date" name="startDate" style=" border-radius:5px ;width: 130px; height:30px" />
 
+            <label for="endDate" style="color:white">End Date:</label>
+            <input type="date" name="endDate"  style=" border-radius:5px;  width: 130px; height:30px" />
+            <button type="submit" class="btn btn-dark ">Filter</button>
+        </div>
+        
+        <div style="gap:10px ; display:flex; align-items:center">
+                <select name="status" class="form-select" style="width: 250px; ">
+                    <option value="">Select Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Terminated">Terminated</option>
+                </select>
+                <button type="submit" class="btn btn-dark ">Filter</button>
+               </div>         
+    </div>
+</form>
+
+<br />
 <p>
     <a asp-action="Create">Create New</a>
 </p>

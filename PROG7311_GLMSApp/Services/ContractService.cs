@@ -39,7 +39,7 @@ namespace PROG7311_GLMSApp.Services
                 _context.Add(newContract);
                 await _context.SaveChangesAsync();
             }
-               
+
         }
 
         public async Task<List<Contract>> GetAllContractsAsync()
@@ -73,11 +73,27 @@ namespace PROG7311_GLMSApp.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task< SelectList> ClientNames()
+        public async Task<SelectList> ClientNames()
         {
             var clients = await _context.Client.ToListAsync();
             return new SelectList(clients, "ClientId", "FullName");
 
+        }
+
+        public IEnumerable<Contract> FilterByDateRange(DateOnly? startDate, DateOnly? endDate)
+        {
+                var searchResults = _context.Contract.Where(c => c.StartDate >= startDate & c.EndDate <= endDate);
+                return searchResults.ToList();
+            
+        }
+
+        public IEnumerable<Contract> FilterByStatus(string status)
+        {
+            var statusQuery = from contract in _context.Contract select contract;
+                var searchResults = statusQuery.Where(c => c.Status == status);
+                return searchResults.ToList();
+            
+            
         }
     }
 }
