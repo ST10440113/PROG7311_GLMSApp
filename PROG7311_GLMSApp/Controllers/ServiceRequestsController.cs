@@ -47,9 +47,9 @@ namespace PROG7311_GLMSApp.Controllers
         }
 
         // GET: ServiceRequests/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["Contracts"]= _serviceRequestService.GetContracts();
+            ViewBag.ContractId = await _serviceRequestService.GetContractsWithClients();
             return View();
         }
 
@@ -62,14 +62,22 @@ namespace PROG7311_GLMSApp.Controllers
         {
             if (ModelState.IsValid)
             {
-               await _serviceRequestService.Create(serviceRequest);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _serviceRequestService.Create(serviceRequest);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (InvalidOperationException ex)
+                {
+                   TempData["Error"] = ex.Message;
+                }
             }
-            var contracts =  _serviceRequestService.GetContracts();
-            ViewData["ContractId"] = contracts;
+            
+           ViewBag.ContractId = await _serviceRequestService.GetContractsWithClients();
+            
             return View(serviceRequest);
         }
-       
+      
         // GET: ServiceRequests/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -83,7 +91,7 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ContractId"] = await _serviceRequestService.GetContractsByServiceRequestId(serviceRequest.ServiceRequestId);
+            ViewBag.ContractId = await _serviceRequestService.GetContractsByServiceRequestId(serviceRequest.ServiceRequestId);
             return View(serviceRequest);
         }
 
@@ -119,7 +127,7 @@ namespace PROG7311_GLMSApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ContractId"] = await _serviceRequestService.GetContractsByServiceRequestId(serviceRequest.ServiceRequestId);
+           ViewBag.ContractId = await _serviceRequestService.GetContractsByServiceRequestId(serviceRequest.ServiceRequestId);
             return View(serviceRequest);
         }
 

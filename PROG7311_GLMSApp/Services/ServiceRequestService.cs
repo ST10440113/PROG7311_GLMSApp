@@ -30,18 +30,21 @@ namespace PROG7311_GLMSApp.Services
             }
             else
             {
-              throw new InvalidOperationException($"Service Request cannot be made for a/an {contractStatus} contract");
+              throw new InvalidOperationException($"Service Requests cannot be made for {contractStatus} contracts");
             }
           
         }
 
-        public SelectList GetContracts()
+        public async Task<SelectList> GetContractsWithClients()
         {
-            var contracts = _context.Contract.ToList();
-            return new SelectList(contracts, "ContractId", "ContractId");
-
+            var contracts = await _context.Contract.Include(c => c.Client).ToListAsync();
+            var contractSelectList = contracts.Select(c => new
+            {
+                ContractId = c.ContractId,
+                listFormat = $"Contract {c.ContractId} - {c.Client.FullName}"}).ToList();
+            return new SelectList(contractSelectList, "ContractId", "listFormat");
         }
-
+       
         public async Task<SelectList> GetContractsByServiceRequestId(int serviceRequestId)
         {
             var serviceRequest = await _context.ServiceRequest.FindAsync(serviceRequestId);
