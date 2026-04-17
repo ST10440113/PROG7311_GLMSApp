@@ -19,6 +19,7 @@ namespace PROG7311_GLMSApp
             builder.Services.AddScoped<ClientService>();
             builder.Services.AddScoped<ServiceRequestService>();
             builder.Services.AddScoped<IContractFactory, ContractFactory>();
+            builder.Services.AddScoped<ContractContext>();
 
 
             var app = builder.Build();

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 using PROG7311_GLMSApp.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PROG7311_GLMSApp.Controllers
 {
@@ -70,6 +70,7 @@ namespace PROG7311_GLMSApp.Controllers
         public async Task<IActionResult> Create()
         {
             ViewBag.ClientId = await _contractService.ClientNames();
+            
             return View();
         }
 
@@ -80,6 +81,11 @@ namespace PROG7311_GLMSApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId")] Contract contract)
         {
+            
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
             if (ModelState.IsValid)
             {
                 try {

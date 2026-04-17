@@ -49,8 +49,8 @@ namespace PROG7311_GLMSApp.Controllers
         // GET: ServiceRequests/Create
         public IActionResult Create()
         {
-           var contracts = _serviceRequestService.GetContracts();
-            return View(contracts);
+            ViewData["Contracts"]= _serviceRequestService.GetContracts();
+            return View();
         }
 
         // POST: ServiceRequests/Create
@@ -65,7 +65,7 @@ namespace PROG7311_GLMSApp.Controllers
                await _serviceRequestService.Create(serviceRequest);
                 return RedirectToAction(nameof(Index));
             }
-            var contracts = await _serviceRequestService.GetContracts();
+            var contracts =  _serviceRequestService.GetContracts();
             ViewData["ContractId"] = contracts;
             return View(serviceRequest);
         }
