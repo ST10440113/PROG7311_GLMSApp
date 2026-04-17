@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Services;
 using System.Diagnostics.Contracts;
+using static PROG7311_GLMSApp.Services.ConcreteContract;
 namespace PROG7311_GLMSApp
 {
     public class Program
@@ -18,8 +19,9 @@ namespace PROG7311_GLMSApp
             builder.Services.AddScoped<ContractService>();
             builder.Services.AddScoped<ClientService>();
             builder.Services.AddScoped<ServiceRequestService>();
-            builder.Services.AddScoped<IContractFactory, ContractFactory>();
+            builder.Services.AddScoped<IContractFactory, ContractFactory>();  
             builder.Services.AddScoped<ContractContext>();
+            
 
 
             var app = builder.Build();

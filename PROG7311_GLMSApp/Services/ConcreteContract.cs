@@ -2,28 +2,31 @@
 
 namespace PROG7311_GLMSApp.Services
 {
-    public class ConcreteContract
+    public class ConcreteContract 
     {
-        public class DraftState : IContractStatus
-        {
-            public bool CreateServiceRequest()
-            {
-                return false;  
-            }
-        }
-
         public class ActiveState : IContractStatus
         {
-            public bool CreateServiceRequest()
+            public bool CreateServiceRequest(ContractContext c)
             {
+                
                 return true;
             }
 
         }
+        public class DraftState : IContractStatus
+        {
+            public bool CreateServiceRequest(ContractContext c)
+            {
+                return false;
+                
+            }
+        }
+
+        
 
         public class OnHoldState : IContractStatus
         {
-            public bool CreateServiceRequest()
+            public bool CreateServiceRequest(ContractContext c)
             {
                 return false;
             }
@@ -31,7 +34,7 @@ namespace PROG7311_GLMSApp.Services
 
         public class ExpiredState : IContractStatus
         {
-            public bool CreateServiceRequest()
+            public bool CreateServiceRequest(ContractContext c)
             {
                 return false;
             }
