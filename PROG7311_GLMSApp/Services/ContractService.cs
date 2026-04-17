@@ -82,7 +82,8 @@ namespace PROG7311_GLMSApp.Services
 
         public IEnumerable<Contract> FilterByDateRange(DateOnly? startDate, DateOnly? endDate)
         {
-                var searchResults = _context.Contract.Where(c => c.StartDate >= startDate & c.EndDate <= endDate);
+            var dateRangeQuery = from contract in _context.Contract select contract;
+            var searchResults = dateRangeQuery.Where(c => c.StartDate >= startDate & c.EndDate <= endDate);
                 return searchResults.ToList();
             
         }

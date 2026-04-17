@@ -24,7 +24,7 @@ namespace PROG7311_GLMSApp.Controllers
         }
 
         // GET: Contracts
-        public async Task<IActionResult> Index(DateOnly? startDate, DateOnly? endDate,string status)
+        public async Task<IActionResult> Index(DateOnly? startDate, DateOnly? endDate, string status)
         {
             var allContracts = await _contractService.GetAllContractsAsync();
 
@@ -32,7 +32,8 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 if (startDate != null & endDate != null)
                 {
-                    _contractService.FilterByDateRange(startDate, endDate);
+                    var contracts = _contractService.FilterByDateRange(startDate, endDate);
+                    return View(contracts);
                 }
                 else
                 {
@@ -42,10 +43,11 @@ namespace PROG7311_GLMSApp.Controllers
 
             if (!string.IsNullOrEmpty(status))
             {
-                _contractService.FilterByStatus(status);
+                var contracts = _contractService.FilterByStatus(status);
+                return View(contracts);
             }
-             
-            return View(allContracts);
+                return View(allContracts);
+            
         }
         
         // GET: Contracts/Details/5
