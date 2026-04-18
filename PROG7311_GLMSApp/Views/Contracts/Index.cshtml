@@ -82,17 +82,28 @@
             <td>
                 @if (item.Status.ToLower() == "draft")
                 {
-                <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a>
-                <a asp-action="Details" asp-route-id = "@item.ContractId">Details</a> 
-                <asp - action = "Delete" asp - route - id = "@item.ContractId" > Delete </ a >
-              
+                        <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a>
+                        <a asp-action="Details" asp-route-id = "@item.ContractId">Details</a> 
+                        <a asp-action="Delete" asp-route-id = "@item.ContractId" > Delete </a>
                     }
-                    else
-                    { }
-
-                <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ContractId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
+                    else if (item.Status.ToLower() == "active")
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a>
+                        <a asp-action = "Details" asp-route-id = "@item.ContractId">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
+                    }
+                    else if (item.Status.ToLower() == "expired")
+                    {
+                        <a asp-action="Details" asp-route-id="@item.ContractId">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
+                    }
+                    else if (item.Status.ToLower() == "onhold")
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.ContractId">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
+                        }                  
+                {
             </td>
         </tr>
 }
