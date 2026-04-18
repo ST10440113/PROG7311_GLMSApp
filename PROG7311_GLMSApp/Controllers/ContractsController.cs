@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
@@ -117,8 +118,9 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 return NotFound();
             }
+           
+                return View(contract);
             
-            return View(contract);
         }
 
         // POST: Contracts/Edit/5

@@ -4,9 +4,9 @@ namespace PROG7311_GLMSApp.Services
 {
     public class ContractContext
     {
-        private IContractStatus _state;
+        private IContractState _state;
        
-        public void SetState(IContractStatus state)
+        public void SetState(IContractState state)
         {
             _state = state;
         }
@@ -15,10 +15,10 @@ namespace PROG7311_GLMSApp.Services
         {
             _state = status switch
             {
-                "Active" => new ActiveState(),
-                "Draft" => new DraftState(),
-                "OnHold" => new OnHoldState(),
-                "Expired" => new ExpiredState(),
+                "Active" => new Active(),
+                "Draft" => new Draft(),
+                "OnHold" => new OnHold(),
+                "Expired" => new Expired(),
                 _ => throw new InvalidOperationException($"Unknown contract status: {status}")
             };
 
@@ -27,7 +27,7 @@ namespace PROG7311_GLMSApp.Services
         }
 
     }
-    public interface IContractStatus
+    public interface IContractState
     {
         bool CreateServiceRequest(ContractContext contractContext);
     }

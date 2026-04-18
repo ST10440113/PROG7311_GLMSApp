@@ -44,17 +44,29 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<List<Contract>> GetAllContractsAsync()
         {
-            return await _context.Contract.Include(c => c.Client).ToListAsync();
+             var contracts = await _context.Contract.Include(c => c.Client).ToListAsync();
+            foreach (var contract in contracts)
+            {
+                if (contract.EndDate < DateOnly.FromDateTime(DateTime.Now))
+                {
+                    contract.Status = "Expired"; 
+                }
+                await UpdateAsync(contract);
+            }
+            return contracts;
+
         }
         public async Task<Contract> GetContractByIdAsync(int id)
         {
             return await _context.Contract.Include(c => c.Client).FirstOrDefaultAsync(c => c.ContractId == id);
+            
         }
-
+        
         public async Task UpdateAsync(Contract contract)
         {
-            _context.Update(contract);
-            await _context.SaveChangesAsync();
+                _context.Update(contract);
+                await _context.SaveChangesAsync();
+            
         }
         public bool ContractExists(int id)
         {

@@ -4,7 +4,7 @@ namespace PROG7311_GLMSApp.Services
 {
     public class ConcreteContract 
     {
-        public class ActiveState : IContractStatus
+        public class Active : IContractState
         {
             public bool CreateServiceRequest(ContractContext c)
             {
@@ -13,7 +13,7 @@ namespace PROG7311_GLMSApp.Services
             }
 
         }
-        public class DraftState : IContractStatus
+        public class Draft : IContractState
         {
             public bool CreateServiceRequest(ContractContext c)
             {
@@ -24,7 +24,7 @@ namespace PROG7311_GLMSApp.Services
 
         
 
-        public class OnHoldState : IContractStatus
+        public class OnHold : IContractState
         {
             public bool CreateServiceRequest(ContractContext c)
             {
@@ -32,7 +32,7 @@ namespace PROG7311_GLMSApp.Services
             }
         }
 
-        public class ExpiredState : IContractStatus
+        public class Expired : IContractState
         {
             public bool CreateServiceRequest(ContractContext c)
             {
