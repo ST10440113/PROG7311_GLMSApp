@@ -5,17 +5,17 @@
        string ServiceLevel { get; }
     }
 
-    public class  GoldServiceLevelContract: IContract
+    public class  GoldServiceLevel: IContract
     { 
         public string ServiceLevel => "Gold";
     }
 
-    public class SilverServiceLevelContract : IContract
+    public class SilverServiceLevel : IContract
     {
         public string ServiceLevel => "Silver";
     }
 
-    public class BronzeServiceLevelContract : IContract
+    public class BronzeServiceLevel : IContract
     {
         public string ServiceLevel => "Bronze";
     }

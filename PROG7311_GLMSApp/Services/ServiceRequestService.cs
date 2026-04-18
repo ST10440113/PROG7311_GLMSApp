@@ -10,11 +10,13 @@ namespace PROG7311_GLMSApp.Services
     {
         private readonly PROG7311_GLMSAppContext _context;
         private readonly ContractContext _contractContext;
+        private readonly Notifier _notifier;
 
-        public ServiceRequestService(PROG7311_GLMSAppContext context, ContractContext contractContext)
+        public ServiceRequestService(PROG7311_GLMSAppContext context, ContractContext contractContext, Notifier notifier)
         {
             _context = context;
             _contractContext = contractContext;
+            _notifier = notifier;
         }
 
         public async Task Create(ServiceRequest serviceRequest)
@@ -27,6 +29,8 @@ namespace PROG7311_GLMSApp.Services
             {
                 _context.Add(serviceRequest);
                 await _context.SaveChangesAsync();
+               
+                
             }
             else
             {

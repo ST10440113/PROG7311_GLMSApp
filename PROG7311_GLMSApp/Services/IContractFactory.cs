@@ -11,9 +11,9 @@
         {
             return serviceLevel.ToLower() switch
             {
-                "gold" => new GoldServiceLevelContract(),
-                "silver" => new SilverServiceLevelContract(),
-                "bronze" => new BronzeServiceLevelContract(),
+                "gold" => new GoldServiceLevel(),
+                "silver" => new SilverServiceLevel(),
+                "bronze" => new BronzeServiceLevel(),
                 _ => throw new ArgumentException("Invalid service level chosen")
             };
 
