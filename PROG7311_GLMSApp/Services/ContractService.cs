@@ -18,6 +18,18 @@ namespace PROG7311_GLMSApp.Services
             _context = context;
         }
 
+        public string CheckContractStatus(Contract contract)
+        {
+            if (contract.EndDate <= DateOnly.FromDateTime(DateTime.Now))
+            {
+                contract.Status = "Expired";
+            }
+            else
+            {
+                contract.Status = "Draft";
+            }
+            return contract.Status;
+        }
         public async Task CreateAsync(Contract contract)
         {
             var SL = (_icontractFactory.Create(contract.ServiceLevel)).ServiceLevel;
@@ -25,7 +37,7 @@ namespace PROG7311_GLMSApp.Services
             {
                 StartDate = contract.StartDate,
                 EndDate = contract.EndDate,
-                Status = "Draft",
+                Status = CheckContractStatus(contract),
                 ServiceLevel = SL,
                 ClientId = contract.ClientId
 
