@@ -1,11 +1,13 @@
-﻿namespace PROG7311_GLMSApp.Models
+﻿using System.Text.Json.Serialization;
+
+namespace PROG7311_GLMSApp.Models
 {
     public class ExchangeRate
     {
-        public string CalculatedAmount { get; set; }
-        public string BaseCode { get; set; }
-        public string TargetCode { get; set; }
-        public double ConversionRate { get; set; }
-        public double ConversionResult { get; set; }
+        [JsonPropertyName("result")] public string CalculatedAmount { get; set; }
+        [JsonPropertyName("base_code")] public string BaseCode { get; set; }
+        [JsonPropertyName("target_code")] public string TargetCode { get; set; }
+        [JsonPropertyName("conversion_rate")] public double ConversionRate { get; set; }
+        [JsonPropertyName("conversion_result")] public double ConversionResult { get; set; }
     }
 }

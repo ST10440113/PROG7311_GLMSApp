@@ -8,12 +8,13 @@ namespace PROG7311_GLMSApp.Models
     {
         [Key]public int ServiceRequestId { get; set; }
        
-        public string Cost { get; set; }
+        public double Cost { get; set; }
         public string Description { get; set; }
         public string Status { get; set; }
-
+        
         [ForeignKey("ContractId")] 
         public int ContractId { get; set; }
         public Contract? Contract { get; set; }
+        public double ZarAmount { get;  set; }
     }
 }

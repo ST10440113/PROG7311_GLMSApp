@@ -11,12 +11,15 @@ namespace PROG7311_GLMSApp.Services
         private readonly PROG7311_GLMSAppContext _context;
         private readonly ContractContext _contractContext;
         private readonly Notifier _notifier;
+        private readonly CurrencyService _currencyService;
 
-        public ServiceRequestService(PROG7311_GLMSAppContext context, ContractContext contractContext, Notifier notifier)
+        public ServiceRequestService(PROG7311_GLMSAppContext context, ContractContext contractContext, 
+            Notifier notifier, CurrencyService currencyService)
         {
             _context = context;
             _contractContext = contractContext;
             _notifier = notifier;
+            _currencyService = currencyService;
         }
 
         public async Task Create(ServiceRequest serviceRequest)
@@ -27,9 +30,13 @@ namespace PROG7311_GLMSApp.Services
 
             if (stateChange == true)
             {
+                var conversion = await _currencyService.ConvertCurrencyAsync(serviceRequest.Cost);
+                if (conversion != null)
+                {
+                    serviceRequest.ZarAmount = conversion.ConversionResult;
+                }
                 _context.Add(serviceRequest);
                 await _context.SaveChangesAsync();
-               
                 
             }
             else

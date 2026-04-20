@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PROG7311_GLMSApp.Data;
 
@@ -11,9 +12,11 @@ using PROG7311_GLMSApp.Data;
 namespace PROG7311_GLMSApp.Migrations
 {
     [DbContext(typeof(PROG7311_GLMSAppContext))]
-    partial class PROG7311_GLMSAppContextModelSnapshot : ModelSnapshot
+    [Migration("20260420194350_tenthCreate")]
+    partial class tenthCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,8 +100,9 @@ namespace PROG7311_GLMSApp.Migrations
                     b.Property<int>("ContractId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Cost")
-                        .HasColumnType("float");
+                    b.Property<string>("Cost")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -107,9 +111,6 @@ namespace PROG7311_GLMSApp.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("ZarAmount")
-                        .HasColumnType("float");
 
                     b.HasKey("ServiceRequestId");
 

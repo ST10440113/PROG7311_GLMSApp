@@ -27,7 +27,7 @@ namespace PROG7311_GLMSApp
             builder.Services.AddScoped<IContractFactory, ContractFactory>();  
             builder.Services.AddScoped<ContractContext>();
             builder.Services.AddScoped<Notifier>();
-            builder.Services.AddScoped<CurrencyService>();
+            
 
 
 
