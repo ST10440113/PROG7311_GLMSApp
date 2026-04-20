@@ -1,10 +1,10 @@
-﻿using System;
+﻿using PROG7311_GLMSApp.Models;
 
 namespace PROG7311_GLMSApp.Services
 {
-    public class Notifier : ISubject
+    public class Notifier: ISubject
     {
-       private List<IServiceRequestObserver> _observers  = new();  
+        private List<IServiceRequestObserver> _observers = new();
 
         public void Subscribe(IServiceRequestObserver observer)
         {
@@ -16,14 +16,14 @@ namespace PROG7311_GLMSApp.Services
             _observers.Remove(observer);
         }
 
-        public void Notify()
+        public string Notify(Contract contract)
         {
+            string message = $"Contract {contract.ContractId} has expired.";
             foreach (var observer in _observers)
             {
-                observer.Update();
+               observer.Update(message);
             }
+            return message;
         }
     }
-
-
-}
+}   

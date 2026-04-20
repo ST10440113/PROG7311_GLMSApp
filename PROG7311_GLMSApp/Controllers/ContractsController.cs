@@ -28,6 +28,7 @@ namespace PROG7311_GLMSApp.Controllers
         public async Task<IActionResult> Index(DateOnly? startDate, DateOnly? endDate, string status)
         {
             var allContracts = await _contractService.GetAllContractsAsync();
+            
 
             if (startDate != null || endDate != null)
             {

@@ -14,6 +14,11 @@ namespace PROG7311_GLMSApp
             builder.Services.AddDbContext<PROG7311_GLMSAppContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("PROG7311_GLMSAppContext") ?? throw new InvalidOperationException("Connection string 'PROG7311_GLMSAppContext' not found.")));
 
+            builder.Services.AddHttpClient<CurrencyService>("ExchangeRateApi", client =>
+            {
+                client.BaseAddress = new Uri("https://v6.exchangerate-api.com/v6/");
+            });
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ContractService>();
@@ -21,7 +26,9 @@ namespace PROG7311_GLMSApp
             builder.Services.AddScoped<ServiceRequestService>();
             builder.Services.AddScoped<IContractFactory, ContractFactory>();  
             builder.Services.AddScoped<ContractContext>();
-            
+            builder.Services.AddScoped<Notifier>();
+            builder.Services.AddScoped<CurrencyService>();
+
 
 
             var app = builder.Build();
@@ -44,7 +51,7 @@ namespace PROG7311_GLMSApp
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
-
+           
             app.Run();
         }
     }

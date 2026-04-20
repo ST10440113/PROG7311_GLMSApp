@@ -7,22 +7,28 @@ using PROG7311_GLMSApp.Models;
 
 namespace PROG7311_GLMSApp.Services
 {
-    public class ContractService
+    public class ContractService 
     {
-        private readonly IContractFactory _icontractFactory;
         private readonly PROG7311_GLMSAppContext _context;
+        private readonly IContractFactory _icontractFactory;
+        private List<IServiceRequestObserver> _observers = new();
+        private readonly Notifier _notifier;
 
-        public ContractService(IContractFactory icontractFactory, PROG7311_GLMSAppContext context)
-        {
+        public ContractService(IContractFactory icontractFactory, PROG7311_GLMSAppContext context, Notifier notifier)
+        {    
             _icontractFactory = icontractFactory;
             _context = context;
+            _notifier = notifier;
         }
+        
+        
 
         public string CheckContractStatus(Contract contract)
         {
             if (contract.EndDate <= DateOnly.FromDateTime(DateTime.Now))
             {
                 contract.Status = "Expired";
+               
             }
             else
             {
@@ -61,9 +67,12 @@ namespace PROG7311_GLMSApp.Services
             {
                 if (contract.EndDate < DateOnly.FromDateTime(DateTime.Now))
                 {
-                    contract.Status = "Expired"; 
+                    contract.Status = "Expired";
+                    _notifier.Subscribe(new Notification(contract.ContractId));
+                 string message = _notifier.Notify(contract);
+                    await UpdateAsync(contract);
                 }
-                await UpdateAsync(contract);
+               
             }
             return contracts;
 

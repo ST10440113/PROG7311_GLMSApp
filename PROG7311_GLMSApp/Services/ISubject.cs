@@ -1,9 +1,11 @@
-﻿namespace PROG7311_GLMSApp.Services
+﻿using PROG7311_GLMSApp.Models;
+
+namespace PROG7311_GLMSApp.Services
 {
     public interface ISubject
     {
         void Subscribe(IServiceRequestObserver observer);
         void Unsubscribe(IServiceRequestObserver observer);
-        void Notify();
+        string Notify(Contract contract);
     }
 }
