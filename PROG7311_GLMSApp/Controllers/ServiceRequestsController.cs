@@ -37,7 +37,7 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
             }
 
-            var serviceRequest = _serviceRequestService.GetServiceRequestByIdAsync(id.Value);
+            var serviceRequest = await _serviceRequestService.GetServiceRequestByIdAsync(id.Value);
             if (serviceRequest == null)
             {
                 return NotFound();
@@ -65,7 +65,9 @@ namespace PROG7311_GLMSApp.Controllers
                 try
                 {
                     await _serviceRequestService.Create(serviceRequest);
+                   TempData["Success"] = "Service request status for contract " + serviceRequest.ContractId + " is now " + serviceRequest.Status;
                     return RedirectToAction(nameof(Index));
+                    
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -125,6 +127,7 @@ namespace PROG7311_GLMSApp.Controllers
                         throw;
                     }
                 }
+                TempData["Success"] = "Service request status for contract " + serviceRequest.ContractId + " is now " + serviceRequest.Status;
                 return RedirectToAction(nameof(Index));
             }
            ViewBag.ContractId = await _serviceRequestService.GetContractsByServiceRequestId(serviceRequest.ServiceRequestId);

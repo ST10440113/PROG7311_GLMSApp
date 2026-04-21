@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Build.Evaluation;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_GLMSApp.Data;
@@ -12,6 +13,7 @@ namespace PROG7311_GLMSApp.Services
         private readonly ContractContext _contractContext;
         private readonly Notifier _notifier;
         private readonly CurrencyService _currencyService;
+        
 
         public ServiceRequestService(PROG7311_GLMSAppContext context, ContractContext contractContext, 
             Notifier notifier, CurrencyService currencyService)
@@ -20,24 +22,36 @@ namespace PROG7311_GLMSApp.Services
             _contractContext = contractContext;
             _notifier = notifier;
             _currencyService = currencyService;
+            
+        }
+
+        public async Task Conversion(ServiceRequest serviceRequest)
+        {
+            var conversion = await _currencyService.ConvertCurrencyAsync(serviceRequest.Cost);
+            if (conversion != null)
+            {
+                serviceRequest.ZarAmount = conversion.ConversionResult;
+            }
         }
 
         public async Task Create(ServiceRequest serviceRequest)
-        {
+        {      
+            var manager = new Notification(serviceRequest.ContractId, serviceRequest.Status);
+            _notifier.Subscribe(manager);
+
             var contract = await _context.Contract.FindAsync(serviceRequest.ContractId);
             var contractStatus = contract.Status;
             var stateChange = _contractContext.ChangeState(contractStatus);
 
             if (stateChange == true)
             {
-                var conversion = await _currencyService.ConvertCurrencyAsync(serviceRequest.Cost);
-                if (conversion != null)
-                {
-                    serviceRequest.ZarAmount = conversion.ConversionResult;
-                }
+                await Conversion(serviceRequest);
+
                 _context.Add(serviceRequest);
                 await _context.SaveChangesAsync();
-                
+
+              _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);
+            
             }
             else
             {
@@ -73,8 +87,13 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task UpdateAsync(ServiceRequest serviceRequest)
         {
-            _context.Update(serviceRequest);
+            var manager = new Notification(serviceRequest.ContractId, serviceRequest.Status);
+            _notifier.Subscribe(manager);
+            _context.Update(serviceRequest); 
+            _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);
+           
             await _context.SaveChangesAsync();
+            
         }
         public async Task DeleteAsync(int id) 
         {

@@ -6,6 +6,6 @@ namespace PROG7311_GLMSApp.Services
     {
         void Subscribe(IServiceRequestObserver observer);
         void Unsubscribe(IServiceRequestObserver observer);
-        string Notify(Contract contract);
+        string Notify(string status, int contractId);
     }
 }

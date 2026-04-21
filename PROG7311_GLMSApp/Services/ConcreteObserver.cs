@@ -1,21 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.Identity.Client;
+using PROG7311_GLMSApp.Models;
+using System.Diagnostics.Contracts;
 
 namespace PROG7311_GLMSApp.Services
 {
     public class Notification : IServiceRequestObserver
     {
         private int _contractId;
-        public Notification(int contractId) 
+        private string _status;
+        public Notification(int contractId, string status) 
         {
            _contractId = contractId;
-          
+           _status = status;
         } 
         
-        public void Update(string message)
+        public string Update(string message)
         {
-           message = $"Contract {_contractId} has expired.";
+           message = $"Service Request status for Contract {_contractId} is now {_status}";
+           return message;
         }
     }
 }
- 

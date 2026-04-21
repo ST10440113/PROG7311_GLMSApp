@@ -16,14 +16,16 @@ namespace PROG7311_GLMSApp.Services
             _observers.Remove(observer);
         }
 
-        public string Notify(Contract contract)
+        public string Notify(string status, int contractId)
         {
-            string message = $"Contract {contract.ContractId} has expired.";
+            string message = $"Service Request status for Contract {contractId} is now {status}";
             foreach (var observer in _observers)
             {
                observer.Update(message);
             }
             return message;
         }
+
+        
     }
 }   

@@ -2,6 +2,6 @@
 {
     public interface IServiceRequestObserver
     {
-        void Update(string message);
+        string Update(string message);
     }
 }

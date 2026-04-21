@@ -69,8 +69,6 @@ namespace PROG7311_GLMSApp.Services
                 if (contract.EndDate < DateOnly.FromDateTime(DateTime.Now))
                 {
                     contract.Status = "Expired";
-                    _notifier.Subscribe(new Notification(contract.ContractId));
-                    string message = _notifier.Notify(contract);
                     await UpdateAsync(contract);
                 }
 
