@@ -18,13 +18,12 @@ namespace PROG7311_GLMSApp.Controllers
 {
     public class ContractsController : Controller
     {
-        private readonly PROG7311_GLMSAppContext _context;
+        
         private readonly ContractService _contractService;
         private readonly IWebHostEnvironment _environment;
 
-        public ContractsController(PROG7311_GLMSAppContext context, ContractService contractService,IWebHostEnvironment environment)
-        {
-            _context = context;
+        public ContractsController(ContractService contractService,IWebHostEnvironment environment)
+        { 
             _contractService = contractService;
             _environment = environment;
         }
@@ -33,7 +32,6 @@ namespace PROG7311_GLMSApp.Controllers
         public async Task<IActionResult> Index(DateOnly? startDate, DateOnly? endDate, string status)
         {
             var allContracts = await _contractService.GetAllContractsAsync();
-
 
             if (startDate != null || endDate != null)
             {
