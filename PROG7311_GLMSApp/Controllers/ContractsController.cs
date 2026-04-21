@@ -83,16 +83,38 @@ namespace PROG7311_GLMSApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId")] Contract contract)
-        {
-            
+        public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId")] Contract contract,IFormFile? file)
+        {            
             foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
             {
                 Console.WriteLine(error.ErrorMessage);
             }
+            if (file != null)
+            {
+                var allowedExtension = ".pdf";
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (allowedExtension != extension)
+                {
+                    TempData["Error"] = "Invalid file type. Only PDF files are allowed.";
+                    return View(contract);
+                }
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "fileUploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                var filePath = Path.Combine(uploadsFolder, file.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                TempData["Success"] = "File uploaded successfully.";
+            }
+
             if (ModelState.IsValid)
             {
-                try {
+                try
+                {
                     await _contractService.CreateAsync(contract);
                     return RedirectToAction(nameof(Index));
                 }
@@ -102,9 +124,11 @@ namespace PROG7311_GLMSApp.Controllers
                 }
 
             }
+            
             ViewBag.ClientId = await _contractService.ClientNames();
             return View(contract);
         }
+
 
         // GET: Contracts/Edit/5
         public async Task<IActionResult> Edit(int? id)
