@@ -15,14 +15,16 @@ namespace PROG7311_GLMSApp.Services
         public async Task<ExchangeRate> ConvertCurrencyAsync(double amount)
         {
             var response = await _httpClient.GetAsync($"39a42ce614d440f01d558d73/pair/USD/ZAR/{amount}");
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<ExchangeRate>();
-            }
-            return null;
+            var exchangeData = await response.Content.ReadFromJsonAsync<ExchangeRate>();
+            exchangeData.ConversionResult = ConvertToZar(amount, exchangeData.ConversionRate);
+            return exchangeData;
         }
 
-       
+        public double ConvertToZar(double amount, double exchangeRate)
+        {
+            return amount * exchangeRate;
+        }
+
     }
 }
 

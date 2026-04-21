@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 using PROG7311_GLMSApp.Services;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,29 +87,13 @@ namespace PROG7311_GLMSApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId,FilePath")] Contract contract, IFormFile? file)
         {
-            if (file != null)
+            await UploadFile(file, contract);
+
+            if(TempData["Error"] != null)
             {
-                var allowedExtension = ".pdf";
-                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                if (allowedExtension != extension)
-                {
-                    TempData["Error"] = "Invalid file type. Only PDF files are allowed.";
-                    return View(contract);
-                }
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "fileUploads");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-                contract.FilePath = file.FileName;
-                var filePath = Path.Combine(uploadsFolder, file.FileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
+                ViewBag.ClientId = await _contractService.ClientNames();
+                return View(contract);
             }
-
 
             if (ModelState.IsValid)
             {
@@ -224,6 +207,36 @@ namespace PROG7311_GLMSApp.Controllers
                 return NotFound();
           var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             return File(fileStream, "application/pdf", fileName);
+        }
+
+        public async Task<IActionResult> UploadFile(IFormFile file, Contract contract)
+        {
+            if (file != null)
+            {
+                try
+                {
+                    _contractService.CheckFileExtension(file);
+                }
+                catch (ArgumentException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                    return View(contract);
+                } 
+
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "fileUploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                contract.FilePath = file.FileName;
+                var filePath = Path.Combine(uploadsFolder, file.FileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+            return View(contract);
         }
     }
 }

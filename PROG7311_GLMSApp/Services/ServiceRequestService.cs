@@ -91,7 +91,7 @@ namespace PROG7311_GLMSApp.Services
             _notifier.Subscribe(manager);
             _context.Update(serviceRequest); 
             _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);
-           
+            await Conversion(serviceRequest);
             await _context.SaveChangesAsync();
             
         }

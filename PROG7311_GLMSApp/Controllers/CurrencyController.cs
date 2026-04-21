@@ -17,10 +17,10 @@ namespace PROG7311_GLMSApp.Controllers
         {
             return View();
         }
-      
+
         [HttpPost("convert")]
         public async Task<IActionResult> ConvertCurrency(double amount)
-        {           
+        {
             var exchangeRate = await _currencyService.ConvertCurrencyAsync(amount);
             if (exchangeRate != null)
             {
@@ -29,5 +29,7 @@ namespace PROG7311_GLMSApp.Controllers
             return NotFound("Unable to convert currency.");
 
         }
+
+       
     }
 }

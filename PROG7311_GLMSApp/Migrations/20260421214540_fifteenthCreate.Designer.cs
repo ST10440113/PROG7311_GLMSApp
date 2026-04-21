@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PROG7311_GLMSApp.Data;
 
@@ -11,9 +12,11 @@ using PROG7311_GLMSApp.Data;
 namespace PROG7311_GLMSApp.Migrations
 {
     [DbContext(typeof(PROG7311_GLMSAppContext))]
-    partial class PROG7311_GLMSAppContextModelSnapshot : ModelSnapshot
+    [Migration("20260421214540_fifteenthCreate")]
+    partial class fifteenthCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -102,7 +102,7 @@ namespace PROG7311_GLMSApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ServiceRequestId,Cost,Description,Status,ContractId")] ServiceRequest serviceRequest)
+        public async Task<IActionResult> Edit(int id, [Bind("ServiceRequestId,Cost,Description,Status,ContractId,ZarAmount")] ServiceRequest serviceRequest)
         {
             if (id != serviceRequest.ServiceRequestId)
             {

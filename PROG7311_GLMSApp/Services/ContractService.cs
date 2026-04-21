@@ -5,6 +5,7 @@ using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 
 
+
 namespace PROG7311_GLMSApp.Services
 {
     public class ContractService
@@ -128,6 +129,15 @@ namespace PROG7311_GLMSApp.Services
 
         }
 
-        
+        public void CheckFileExtension(IFormFile file)
+        {
+            var allowedExtension = ".pdf";
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (allowedExtension != extension)
+            {
+                throw new ArgumentException("Invalid file type. Only PDF files are allowed.");
+            }           
+        }
+
     }
 }
