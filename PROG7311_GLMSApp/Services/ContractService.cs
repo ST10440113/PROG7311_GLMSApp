@@ -7,7 +7,7 @@ using PROG7311_GLMSApp.Models;
 
 namespace PROG7311_GLMSApp.Services
 {
-    public class ContractService 
+    public class ContractService
     {
         private readonly PROG7311_GLMSAppContext _context;
         private readonly IContractFactory _icontractFactory;
@@ -15,20 +15,20 @@ namespace PROG7311_GLMSApp.Services
         private readonly Notifier _notifier;
 
         public ContractService(IContractFactory icontractFactory, PROG7311_GLMSAppContext context, Notifier notifier)
-        {    
+        {
             _icontractFactory = icontractFactory;
             _context = context;
             _notifier = notifier;
         }
-        
-        
+
+
 
         public string CheckContractStatus(Contract contract)
         {
             if (contract.EndDate <= DateOnly.FromDateTime(DateTime.Now))
             {
                 contract.Status = "Expired";
-               
+
             }
             else
             {
@@ -45,6 +45,7 @@ namespace PROG7311_GLMSApp.Services
                 EndDate = contract.EndDate,
                 Status = CheckContractStatus(contract),
                 ServiceLevel = SL,
+                FilePath = contract.FilePath,
                 ClientId = contract.ClientId
 
             };
@@ -62,17 +63,17 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<List<Contract>> GetAllContractsAsync()
         {
-             var contracts = await _context.Contract.Include(c => c.Client).ToListAsync();
+            var contracts = await _context.Contract.Include(c => c.Client).ToListAsync();
             foreach (var contract in contracts)
             {
                 if (contract.EndDate < DateOnly.FromDateTime(DateTime.Now))
                 {
                     contract.Status = "Expired";
                     _notifier.Subscribe(new Notification(contract.ContractId));
-                 string message = _notifier.Notify(contract);
+                    string message = _notifier.Notify(contract);
                     await UpdateAsync(contract);
                 }
-               
+
             }
             return contracts;
 
@@ -80,14 +81,14 @@ namespace PROG7311_GLMSApp.Services
         public async Task<Contract> GetContractByIdAsync(int id)
         {
             return await _context.Contract.Include(c => c.Client).FirstOrDefaultAsync(c => c.ContractId == id);
-            
+
         }
-        
+
         public async Task UpdateAsync(Contract contract)
         {
-                _context.Update(contract);
-                await _context.SaveChangesAsync();
-            
+            _context.Update(contract);
+            await _context.SaveChangesAsync();
+
         }
         public bool ContractExists(int id)
         {
@@ -117,17 +118,18 @@ namespace PROG7311_GLMSApp.Services
         {
             var dateRangeQuery = from contract in _context.Contract select contract;
             var searchResults = dateRangeQuery.Where(c => c.StartDate >= startDate & c.EndDate <= endDate);
-                return searchResults.ToList();
-            
+            return searchResults.ToList();
+
         }
 
         public IEnumerable<Contract> FilterByStatus(string status)
         {
             var statusQuery = from contract in _context.Contract select contract;
-                var searchResults = statusQuery.Where(c => c.Status == status);
-                return searchResults.ToList();
-            
-            
+            var searchResults = statusQuery.Where(c => c.Status == status);
+            return searchResults.ToList();
+
         }
+
+        
     }
 }

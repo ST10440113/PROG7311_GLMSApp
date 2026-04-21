@@ -42,6 +42,14 @@
         </dd>
     </dl>
 </div>
+<div class="card">
+    <div class="card-header">
+        <h5> Signed Agreements</h5>
+    </div>
+    <div class="card-body">
+        <a asp-action="DownloadFile" class="btn btn-primary" asp-route-fileName="@Model.FilePath">Download File</a> 
+    </div>
+</div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.ContractId">Edit</a> |
     <a asp-action="Index">Back to List</a>

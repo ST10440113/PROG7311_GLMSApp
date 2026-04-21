@@ -69,6 +69,9 @@ namespace PROG7311_GLMSApp.Migrations
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ServiceLevel")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

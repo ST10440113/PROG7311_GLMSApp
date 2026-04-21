@@ -13,6 +13,8 @@ namespace PROG7311_GLMSApp.Models
 
        public string ServiceLevel { get; set; }
 
+      public string? FilePath { get; set; }
+
         [ForeignKey("ClientId")] 
          public int ClientId { get; set; }
         public Client? Client { get; set; }

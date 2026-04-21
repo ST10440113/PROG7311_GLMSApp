@@ -10,14 +10,7 @@
      <button class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>  
 }
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success alert-dismissible">
-     @TempData["Success"]
-     <button class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    
-}
+
 
 <h1>Create</h1>
 
@@ -54,9 +47,9 @@
                 <span asp-validation-for="ClientId" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label name="document" class="form-label">Supporting Documents</label>
+                <label name="file" class="form-label">Signed Agreements</label>
                 <input type="file" name="file" class="form-control" accept=".pdf" />
-                <small class="form-text text-muted">Upload supporting documents</small>
+                
             </div>
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">

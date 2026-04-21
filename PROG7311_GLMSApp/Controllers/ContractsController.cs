@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 using PROG7311_GLMSApp.Services;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 
 namespace PROG7311_GLMSApp.Controllers
@@ -17,18 +20,20 @@ namespace PROG7311_GLMSApp.Controllers
     {
         private readonly PROG7311_GLMSAppContext _context;
         private readonly ContractService _contractService;
+        private readonly IWebHostEnvironment _environment;
 
-        public ContractsController(PROG7311_GLMSAppContext context, ContractService contractService)
+        public ContractsController(PROG7311_GLMSAppContext context, ContractService contractService,IWebHostEnvironment environment)
         {
             _context = context;
             _contractService = contractService;
+            _environment = environment;
         }
 
         // GET: Contracts
         public async Task<IActionResult> Index(DateOnly? startDate, DateOnly? endDate, string status)
         {
             var allContracts = await _contractService.GetAllContractsAsync();
-            
+
 
             if (startDate != null || endDate != null)
             {
@@ -48,10 +53,10 @@ namespace PROG7311_GLMSApp.Controllers
                 var contracts = _contractService.FilterByStatus(status);
                 return View(contracts);
             }
-                return View(allContracts);
-            
+            return View(allContracts);
+
         }
-        
+
         // GET: Contracts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -74,7 +79,7 @@ namespace PROG7311_GLMSApp.Controllers
         public async Task<IActionResult> Create()
         {
             ViewBag.ClientId = await _contractService.ClientNames();
-            
+
             return View();
         }
 
@@ -83,9 +88,8 @@ namespace PROG7311_GLMSApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId")] Contract contract,IFormFile? file)
-        {            
-            
+        public async Task<IActionResult> Create([Bind("ContractId,StartDate,EndDate,Status,ServiceLevel,ClientId,FilePath")] Contract contract, IFormFile? file)
+        {
             if (file != null)
             {
                 var allowedExtension = ".pdf";
@@ -100,13 +104,15 @@ namespace PROG7311_GLMSApp.Controllers
                 {
                     Directory.CreateDirectory(uploadsFolder);
                 }
+                contract.FilePath = file.FileName;
                 var filePath = Path.Combine(uploadsFolder, file.FileName);
+
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
-                TempData["Success"] = "File uploaded successfully.";
             }
+
 
             if (ModelState.IsValid)
             {
@@ -119,9 +125,8 @@ namespace PROG7311_GLMSApp.Controllers
                 {
                     TempData["Error"] = ex.Message;
                 }
-
             }
-            
+
             ViewBag.ClientId = await _contractService.ClientNames();
             return View(contract);
         }
@@ -140,9 +145,9 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 return NotFound();
             }
-           
-                return View(contract);
-            
+
+            return View(contract);
+
         }
 
         // POST: Contracts/Edit/5
@@ -161,7 +166,7 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 try
                 {
-                  await _contractService.UpdateAsync(contract);  
+                    await _contractService.UpdateAsync(contract);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -206,12 +211,22 @@ namespace PROG7311_GLMSApp.Controllers
 
             if (contract != null)
             {
-               await _contractService.Delete(contract.ContractId);
+                await _contractService.Delete(contract.ContractId);
             }
 
             return RedirectToAction(nameof(Index));
         }
-
-       
+         
+        [HttpGet]
+        public IActionResult DownloadFile(string fileName)
+        {
+            string filePath = Path.Combine(_environment.WebRootPath, "fileUploads", fileName);
+           
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+          var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "application/pdf", fileName);
+        }
     }
 }
+
