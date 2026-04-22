@@ -19,7 +19,8 @@
     </div>
 
 }
-<h1>Contracts</h1>
+<h1 style="font-weight: bold; font-family: Arial, sans-serif;">Contract Dashboard</h1>
+
 <form asp-controller="Contracts" asp-action="Index" >
     <div class="form-control" style="display:flex; justify-content:space-between; align-items:center; background-color:teal; padding: 10px 20px;">
         <div style="display:flex;align-items:center;gap:10px;">
@@ -46,9 +47,9 @@
 
 <br />
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">+Add New Contract</a>
 </p>
-<table class="table">
+<table class="table table-bordered border-opacity-100 table-secondary table-striped">
     <thead>
         <tr>
             <th>
@@ -66,7 +67,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Client)
             </th>
-            <th></th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -90,28 +91,30 @@
             <td>
                 @if (item.Status.ToLower() == "draft")
                 {
-                        <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a>
-                        <a asp-action="Details" asp-route-id = "@item.ContractId">Details</a> 
-                        <a asp-action="Delete" asp-route-id = "@item.ContractId" > Delete </a>
+                        <a asp-action="Edit" asp-route-id="@item.ContractId" class="btn btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-id = "@item.ContractId" class="btn btn-info">Details</a> 
+                        <a asp-action="Delete" asp-route-id = "@item.ContractId" class="btn btn-danger">Delete</a>
                     }
                     else if (item.Status.ToLower() == "active")
                     {
-                        <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a>
-                        <a asp-action = "Details" asp-route-id = "@item.ContractId">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@item.ContractId" class="btn btn-warning">Edit</a>
+                        <a asp-action = "Details" asp-route-id = "@item.ContractId" class="btn btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ContractId" class="btn btn-danger">Delete</a>
                     }
                     else if (item.Status.ToLower() == "expired")
                     {
-                        <a asp-action="Details" asp-route-id="@item.ContractId">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
+                        <div style="padding-left: 60px;">
+                        <a asp-action="Details" asp-route-id="@item.ContractId" class="btn btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ContractId" class="btn btn-danger">Delete</a>
+                        </div>
                     }
                     else if (item.Status.ToLower() == "onhold")
                     {
-                        <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.ContractId">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
-                        }                  
-                {
+                        <a asp-action="Edit" asp-route-id="@item.ContractId" class="btn btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.ContractId" class="btn btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ContractId" class="btn btn-danger">Delete</a>
+                     }                  
+                
             </td>
         </tr>
 }

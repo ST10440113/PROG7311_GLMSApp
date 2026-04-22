@@ -6,12 +6,12 @@ namespace PROG7311_GLMSApp.Models
     public class Contract
     {
       [Key] public int ContractId { get; set; }
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
+        [Display(Name ="Start Date")]public DateOnly StartDate { get; set; }
+       [Display(Name ="End Date")] public DateOnly EndDate { get; set; }
 
       public string? Status { get; set; }
 
-       public string ServiceLevel { get; set; }
+        [Display(Name = "Service Level")] public string ServiceLevel { get; set; }
 
       public string FilePath { get; set; }
 

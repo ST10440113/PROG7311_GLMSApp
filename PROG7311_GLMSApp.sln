@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.36915.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROG7311_GLMSApp", "PROG7311_GLMSApp\PROG7311_GLMSApp.csproj", "{B25F9AA6-BCF9-4598-9873-B3B979FB8A4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LGMS_Test", "LGMS_Test\LGMS_Test.csproj", "{53D27C61-2C33-4BC1-A6E5-0D058BC3B234}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLMS_Test", "LGMS_Test\GLMS_Test.csproj", "{53D27C61-2C33-4BC1-A6E5-0D058BC3B234}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
