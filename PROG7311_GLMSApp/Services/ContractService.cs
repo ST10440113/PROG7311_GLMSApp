@@ -85,8 +85,16 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task UpdateAsync(Contract contract)
         {
-            _context.Update(contract);
-            await _context.SaveChangesAsync();
+            if (contract.EndDate < contract.StartDate)
+            {
+                throw new ArgumentException("End date cannot be earlier than start date");
+            }
+            else
+            {
+                _context.Update(contract);
+                await _context.SaveChangesAsync();
+            }
+            
 
         }
         public bool ContractExists(int id)

@@ -34,7 +34,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="ServiceLevel" class="control-label"></label>
-                <input asp-for="ServiceLevel" class="form-control" />
+                <select asp-for="ServiceLevel" class="form-control">
+                    <option class="dropdown-item disabled">--- Select Service Level ---</option>
+                    <option value="gold" data-bs-toggle="tooltip" title="24/7 Support; Priority Handling; 1 Hour Response Time">Gold Level</option>
+                    <option value="silver" data-bs-toggle="tooltip" title="12/5 Support; Standard Handling; 4 Hour Response Time">Silver Level</option>
+                    <option value="bronze" data-bs-toggle="tooltip" title="8/5 Support; Basic Handling; 8 Hour Response Time">Bronze Level</option>
+                </select>
                 <span asp-validation-for="ServiceLevel" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -42,6 +47,7 @@
                 <select asp-for="ClientId" class="form-control" asp-items="ViewBag.ClientId"></select>
                 <span asp-validation-for="ClientId" class="text-danger"></span>
             </div>
+            
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

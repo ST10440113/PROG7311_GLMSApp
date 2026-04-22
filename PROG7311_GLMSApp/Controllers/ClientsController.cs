@@ -143,10 +143,14 @@ namespace PROG7311_GLMSApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var client = await _clientService.GetClientByIdAsync(id);
-           
+            if (client != null)
+            {
+                await _clientService.Delete(client.ClientId);
+            }
             return RedirectToAction(nameof(Index));
         }
 
         
     }
 }
+

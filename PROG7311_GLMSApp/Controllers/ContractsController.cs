@@ -160,6 +160,10 @@ namespace PROG7311_GLMSApp.Controllers
                         throw;
                     }
                 }
+                catch (ArgumentException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.ClientId = await _contractService.ClientNames();

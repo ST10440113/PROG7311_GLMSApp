@@ -24,16 +24,18 @@ namespace PROG7311_GLMSApp.Services
             _context.Update(client);
             await _context.SaveChangesAsync();
         }
-        public async Task DeleteAsync(Client client)
+        
+        public async Task Delete(int id)
         {
+            var client = await GetClientByIdAsync(id);
             if (client != null)
             {
                 _context.Client.Remove(client);
             }
 
             await _context.SaveChangesAsync();
-
         }
+
         public async Task<Client> GetClientByIdAsync(int id)
         {
             return await _context.Client.FirstOrDefaultAsync(m => m.ClientId == id);
