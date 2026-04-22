@@ -2,7 +2,43 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+    <div class="text-center text-bg-dark">
+        <h1 class="display-6" style="font-family:'Franklin Gothic Medium', 'Arial Narrow' , Arial, sans-serif;font-weight:100">
+          TECHMOVE 
+        </h1>
+        <h4 class="display-6 ">
+            <strong><em>Global Logistics Management System</em></strong>
+        </h4>
+    </div>
+    
+    <div class="row justify-content-center" style="padding: 100px;">
+        <div class="col-md-4 d-flex">
+            <div class="card" style="width: 18rem;height:10rem;background-color:lightgray">
+                <div class="card-body text-center" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                    <h5 class="card-title fw-semibold text-dark">Client Dashboard</h5>
+                    <br>
+                    <a href="/Clients/Index" class="btn btn-info" style="color:black">Manage Clients</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex">
+            <div class="card" style="width: 18rem;height:10rem;background-color:lightgrey">
+                <div class="card-body text-center" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                    <h5 class="card-title fw-semibold text-dark">Contract Dashboard</h5>
+                    <br>
+                    <a href="/Contracts/Index" class="btn btn-secondary" style="color:black">Manage Contracts</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex">
+            <div class="card" style="width: 18rem;height:10rem;background-color:lightgrey">
+                <div class="card-body text-center" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                    <h5 class="card-title fw-semibold text-dark">Service Request Dashboard</h5>
+                    <br>
+                    <a href="/ServiceRequests/Index" class="btn btn-primary" style="color:black">Manage Service Requests</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
