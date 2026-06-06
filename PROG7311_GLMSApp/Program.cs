@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Services;
-using System.Diagnostics.Contracts;
 using static PROG7311_GLMSApp.Services.ConcreteContract;
 namespace PROG7311_GLMSApp
 {
@@ -26,17 +25,17 @@ namespace PROG7311_GLMSApp
 
             builder.Services.AddHttpClient<ContractService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7261");                
+                client.BaseAddress = new Uri("https://localhost:7256");                
             });
 
             builder.Services.AddHttpClient<ClientService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7261");
+                client.BaseAddress = new Uri("https://localhost:7256");
             });
 
             builder.Services.AddHttpClient<ServiceRequestService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7261");
+                client.BaseAddress = new Uri("https://localhost:7256");
             });
 
 

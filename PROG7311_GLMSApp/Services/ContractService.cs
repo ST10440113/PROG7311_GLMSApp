@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_GLMSApp.Data;
@@ -27,14 +29,11 @@ namespace PROG7311_GLMSApp.Services
             
         }
 
-
-
         public string CheckContractStatus(Contract contract)
         {
             if (contract.EndDate <= DateOnly.FromDateTime(DateTime.Now))
             {
                 contract.Status = "Expired";
-
             }
             else
             {
@@ -42,6 +41,8 @@ namespace PROG7311_GLMSApp.Services
             }
             return contract.Status;
         }
+
+
         public async Task CreateAsync(Contract contract)
         {
             var SL = (_icontractFactory.Create(contract.ServiceLevel)).ServiceLevel;
@@ -61,33 +62,46 @@ namespace PROG7311_GLMSApp.Services
             }
             else
             {
-                _context.Add(newContract);
-                await _context.SaveChangesAsync();
+                var response = await _httpClient.PostAsJsonAsync("/api/Contract", newContract);
+                 await response.Content.ReadFromJsonAsync<Contract>();
             }
 
         }
 
         public async Task<List<Contract>> GetAllContractsAsync()
         {
-            var contracts = await _context.Contract.Include(c => c.Client).ToListAsync();
-            foreach (var contract in contracts)
+           var response = await _httpClient.GetAsync("api/Contract");
+            if (response.IsSuccessStatusCode)
             {
-                if (contract.EndDate < DateOnly.FromDateTime(DateTime.Now))
+                var contracts = await response.Content.ReadFromJsonAsync<List<Contract>>();
+                foreach (var contract in contracts)
                 {
-                    contract.Status = "Expired";
-                    await UpdateAsync(contract);
+                    if (contract.EndDate < DateOnly.FromDateTime(DateTime.Now))
+                    {
+                        contract.Status = "Expired";
+                        await UpdateAsync(contract);
+                    }
                 }
+                return contracts;
             }
-            return contracts;
+            return null;
         }
 
-        public async Task<Contract> GetContractByIdAsync(int id)
+
+        
+        
+        public async Task<Contract?> GetContractByIdAsync(int id)
         {
-            return await _context.Contract.Include(c => c.Client).FirstOrDefaultAsync(c => c.ContractId == id);
+            var response = await _httpClient.GetAsync($"/api/Contract/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<Contract>();
+            }
+            return null;
 
         }
 
-        public async Task UpdateAsync(Contract contract)
+        public async Task<Contract?> UpdateAsync(Contract contract)
         {
             if (contract.EndDate < contract.StartDate)
             {
@@ -95,51 +109,60 @@ namespace PROG7311_GLMSApp.Services
             }
             else
             {
-                _context.Update(contract);
-                await _context.SaveChangesAsync();
+                var response = await _httpClient.PutAsJsonAsync($"/api/Contract/{contract.ContractId}", contract);
+                return await response.Content.ReadFromJsonAsync<Contract>();
+
             }
-            
-
-        }
-        public bool ContractExists(int id)
-        {
-            return _context.Contract.Any(e => e.ContractId == id);
         }
 
-
-        public async Task Delete(int id)
+        public async Task<bool> ContractExists(int id)
         {
-            var contract = await GetContractByIdAsync(id);
-            if (contract != null)
+            var response = await _httpClient.GetAsync($"/api/ContractExists/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                _context.Contract.Remove(contract);
+                var contract = await response.Content.ReadFromJsonAsync<Contract>();
+                return contract != null;
             }
-
-            await _context.SaveChangesAsync();
+            return false;
         }
 
+
+        public async Task<bool> Delete(Contract request)
+        {
+            var response = await _httpClient.DeleteAsync($"/api/Contract/{request.ContractId}");
+            return response.IsSuccessStatusCode;
+        }
+        
         public async Task<SelectList> ClientNames()
         {
-            var clients = await _context.Client.ToListAsync();
+            var client = await _httpClient.GetAsync("api/Client");
+             var clients = await client.Content.ReadFromJsonAsync<List<Client>>();
+            
             return new SelectList(clients, "ClientId", "FullName");
-
         }
 
-        public IEnumerable<Contract> FilterByDateRange(DateOnly? startDate, DateOnly? endDate)
+        public async Task<List<Contract>> FilterByDateRange(DateOnly? startDate, DateOnly? endDate)
         {
-            var dateRangeQuery = from contract in _context.Contract select contract;
-            var searchResults = dateRangeQuery.Where(c => c.StartDate >= startDate & c.EndDate <= endDate);
-            return searchResults.ToList();
+            var response = await _httpClient.GetAsync($"/api/Contract/DateRange?startDate={startDate}&endDate={endDate}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<Contract>>();
+            }
+            return null;
 
         }
 
-        public IEnumerable<Contract> FilterByStatus(string status)
+        public async Task<List<Contract>> FilterByStatus(string status)
         {
-            var statusQuery = from contract in _context.Contract select contract;
-            var searchResults = statusQuery.Where(c => c.Status == status);
-            return searchResults.ToList();
+            var response = await _httpClient.GetAsync($"/api/Contract/Status?status={status}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<Contract>>();
+            }
+            return null;
 
         }
+        
 
         public void CheckFileExtension(IFormFile file)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Build.Evaluation;
 using Microsoft.EntityFrameworkCore;
@@ -74,26 +75,37 @@ namespace PROG7311_GLMSApp.Services
 
        
         public async Task<SelectList> GetContractsByServiceRequestId(int serviceRequestId)
-        {
-            var serviceRequest = await _context.ServiceRequest.FindAsync(serviceRequestId);
+        {            
+            var response = await _httpClient.GetAsync($"/api/ServiceRequest/{serviceRequestId}");
+            var serviceRequest = await response.Content.ReadFromJsonAsync<ServiceRequest>();
             return new SelectList(_context.Contract, "ContractId", "ContractId", serviceRequest.ContractId);
 
         }
 
 
-
-        public async Task<List<ServiceRequest>> GetAllServiceRequestsAsync()
+        
+        public async Task<List<ServiceRequest>?> GetAllServiceRequestsAsync()
         {
-            return await _context.ServiceRequest.Include(s => s.Contract).ToListAsync();
+            var response = await _httpClient.GetAsync("/api/ServiceRequest");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<ServiceRequest>>();
+            }
+            return null;
         }
 
 
 
-        public async Task<ServiceRequest> GetServiceRequestByIdAsync(int id)
+        public async Task<ServiceRequest?> GetServiceRequestByIdAsync(int id)
         {
-            return await _context.ServiceRequest.Include(s => s.Contract).FirstOrDefaultAsync(m => m.ServiceRequestId == id);
-        }
+            var response = await _httpClient.GetAsync($"/api/ServiceRequest/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<ServiceRequest>();
+            }
+            return null;
 
+        }
 
 
         public async Task UpdateAsync(ServiceRequest serviceRequest)
@@ -102,28 +114,28 @@ namespace PROG7311_GLMSApp.Services
             _notifier.Subscribe(manager);
             _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);
             await Conversion(serviceRequest);
-            _context.Update(serviceRequest);
-            await _context.SaveChangesAsync();
-            
+            var response = await _httpClient.PutAsJsonAsync($"/api/ServiceRequest/{serviceRequest.ServiceRequestId}", serviceRequest);
+            await response.Content.ReadFromJsonAsync<ServiceRequest>();
+
         }
 
 
-        public async Task DeleteAsync(int id) 
+        public async Task<bool> Delete(ServiceRequest request)
         {
-            var serviceRequest = await GetServiceRequestByIdAsync(id);
-            if (serviceRequest != null)
+            var response = await _httpClient.DeleteAsync($"/api/ServiceRequest/{request.ServiceRequestId}");
+            return response.IsSuccessStatusCode;
+        }
+
+
+        public async Task<bool> ServiceRequestExists(int id)
+        {
+            var response = await _httpClient.GetAsync($"/api/ServiceRequestExists/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                _context.ServiceRequest.Remove(serviceRequest);
+                var serviceRequest = await response.Content.ReadFromJsonAsync<ServiceRequest>();
+                return serviceRequest != null;
             }
-
-            await _context.SaveChangesAsync();
-        }
-
-
-
-        public bool ServiceRequestExists(int id)
-        {
-            return _context.ServiceRequest.Any(e => e.ServiceRequestId == id);
+            return false;
         }
     }
 }
