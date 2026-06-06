@@ -74,11 +74,11 @@ namespace PROG7311_GLMSApp.Services
                 var contracts = await response.Content.ReadFromJsonAsync<List<Contract>>();
                 foreach (var contract in contracts)
                 {
-                    if (contract.EndDate < DateOnly.FromDateTime(DateTime.Now))
-                    {
-                        contract.Status = "Expired";
-                        await UpdateAsync(contract);
-                    }
+                  if (contract.EndDate < DateOnly.FromDateTime(DateTime.Now))
+                  {
+                     contract.Status = "Expired";
+                     await UpdateAsync(contract);
+                  }
                 }
                 return contracts;
             }

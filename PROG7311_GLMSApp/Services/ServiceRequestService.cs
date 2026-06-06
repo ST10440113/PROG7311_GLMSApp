@@ -25,8 +25,7 @@ namespace PROG7311_GLMSApp.Services
             _notifier = notifier;
             _currencyService = currencyService;
             _httpClient = httpClient;
-            
-            
+           
         }
 
         public async Task Conversion(ServiceRequest serviceRequest)
@@ -44,12 +43,7 @@ namespace PROG7311_GLMSApp.Services
             var manager = new Notification(serviceRequest.ContractId, serviceRequest.Status);
             _notifier.Subscribe(manager);
 
-            var contractResponse = await _httpClient.GetAsync($"/api/FindContractByServiceRequestFK_Id/{serviceRequest.ContractId}");
-
-            if (!contractResponse.IsSuccessStatusCode) {
-                throw new InvalidOperationException("Contract not found");
-            }
-                
+            var contractResponse = await _httpClient.GetAsync($"/api/ServiceRequest/FindContractByServiceRequestFK_Id/{serviceRequest.ContractId}");
             var contract = await contractResponse.Content.ReadFromJsonAsync<Contract>();
 
             var contractStatus = contract.Status;
@@ -59,13 +53,9 @@ namespace PROG7311_GLMSApp.Services
             {
                 await Conversion(serviceRequest);
 
-                var response = await _httpClient.PostAsJsonAsync("/api/ServiceRequest", serviceRequest);
+                var response = await _httpClient.PostAsJsonAsync("/api/ServiceRequest", serviceRequest);              
                 await response.Content.ReadFromJsonAsync<ServiceRequest>();
 
-                if (!response.IsSuccessStatusCode) {
-                    throw new InvalidOperationException("Failed to create service request");
-                }
-                   
                 _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);           
             }
             else
@@ -73,6 +63,8 @@ namespace PROG7311_GLMSApp.Services
               throw new InvalidOperationException($"Service Requests cannot be made for {contractStatus} contracts");
             }          
         }
+
+
 
         public async Task<SelectList> GetContractsWithClients()
         {

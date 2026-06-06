@@ -62,8 +62,7 @@ namespace PROG7311_GLMSApp.Services
             var response = await _httpClient.GetAsync($"/api/ClientExists/{id}");
             if (response.IsSuccessStatusCode)
             {
-                var client = await response.Content.ReadFromJsonAsync<Client>();
-                return client != null;
+                var client = await response.Content.ReadFromJsonAsync<Client>();                
             }
             return false;
         }

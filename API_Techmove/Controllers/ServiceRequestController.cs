@@ -23,7 +23,7 @@ namespace API_Techmove.Controllers
         [ProducesResponseType(typeof(IEnumerable<ServiceRequest>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ServiceRequest>>> GetServiceRequests()
         {
-            var serviceRequests = await _context.ServiceRequests.ToListAsync();
+            var serviceRequests = await _context.ServiceRequests.Include(sr => sr.Contract).ToListAsync();
             return Ok(serviceRequests);
         }
 
@@ -42,7 +42,10 @@ namespace API_Techmove.Controllers
         public async Task<IActionResult> FindContractByServiceRequestFK_Id(int id)
         {
             var contract = await _context.Contract.FindAsync(id);
-            if (contract == null) return NotFound();
+            if (contract == null)
+            {
+                return NotFound();
+            }
             return Ok(contract);
         }
 
@@ -54,8 +57,7 @@ namespace API_Techmove.Controllers
         {
             _context.ServiceRequests.Add(serviceRequest);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetServiceRequestByIdAsync),
-            new { id = serviceRequest.ServiceRequestId }, serviceRequest);
+            return Ok(serviceRequest);
         }
 
 
