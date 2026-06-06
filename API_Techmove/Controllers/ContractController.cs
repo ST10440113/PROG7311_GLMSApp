@@ -46,7 +46,7 @@ namespace API_Techmove.Controllers
         [HttpGet("{id}")]
         public async Task<Contract> GetContractByIdAsync(int id)
         {
-            return await _context.Contract.FirstOrDefaultAsync(m => m.ContractId == id);
+            return await _context.Contract.Include(c => c.Client).FirstOrDefaultAsync(m => m.ContractId == id);
         }
 
         // POST api/<ContractController>
@@ -94,7 +94,7 @@ namespace API_Techmove.Controllers
         public IEnumerable<Contract> FilterByDateRange(DateOnly? startDate, DateOnly? endDate)
         {
             var dateRangeQuery = from contract in _context.Contract select contract;
-            var searchResults = dateRangeQuery.Where(c => c.StartDate >= startDate & c.EndDate <= endDate);
+            var searchResults = dateRangeQuery.Include(c => c.Client).Where(c => c.StartDate >= startDate & c.EndDate <= endDate);
             return searchResults.ToList();
 
         }
@@ -104,7 +104,7 @@ namespace API_Techmove.Controllers
         public IEnumerable<Contract> FilterByStatus(string status)
         {
             var statusQuery = from contract in _context.Contract select contract;
-            var searchResults = statusQuery.Where(c => c.Status == status);
+            var searchResults = statusQuery.Include(c => c.Client).Where(c => c.Status == status);
             return searchResults.ToList();
 
         }
