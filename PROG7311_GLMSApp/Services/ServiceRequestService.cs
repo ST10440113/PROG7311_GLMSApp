@@ -9,6 +9,7 @@ namespace PROG7311_GLMSApp.Services
 {
     public class ServiceRequestService
     {
+        private readonly HttpClient _httpClient;
         private readonly PROG7311_GLMSAppContext _context;
         private readonly ContractContext _contractContext;
         private readonly Notifier _notifier;
@@ -16,12 +17,14 @@ namespace PROG7311_GLMSApp.Services
         
 
         public ServiceRequestService(PROG7311_GLMSAppContext context, ContractContext contractContext, 
-            Notifier notifier, CurrencyService currencyService)
+               Notifier notifier, CurrencyService currencyService, HttpClient httpClient)
         {
             _context = context;
             _contractContext = contractContext;
             _notifier = notifier;
             _currencyService = currencyService;
+            _httpClient = httpClient;
+            
             
         }
 
@@ -50,14 +53,12 @@ namespace PROG7311_GLMSApp.Services
                 _context.Add(serviceRequest);
                 await _context.SaveChangesAsync();
 
-              _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);
-            
+              _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);           
             }
             else
             {
               throw new InvalidOperationException($"Service Requests cannot be made for {contractStatus} contracts");
-            }
-          
+            }          
         }
 
         public async Task<SelectList> GetContractsWithClients()
@@ -69,6 +70,8 @@ namespace PROG7311_GLMSApp.Services
                 listFormat = $"Contract {c.ContractId} - {c.Client.FullName}"}).ToList();
             return new SelectList(contractSelectList, "ContractId", "listFormat");
         }
+
+
        
         public async Task<SelectList> GetContractsByServiceRequestId(int serviceRequestId)
         {
@@ -76,25 +79,35 @@ namespace PROG7311_GLMSApp.Services
             return new SelectList(_context.Contract, "ContractId", "ContractId", serviceRequest.ContractId);
 
         }
+
+
+
         public async Task<List<ServiceRequest>> GetAllServiceRequestsAsync()
         {
             return await _context.ServiceRequest.Include(s => s.Contract).ToListAsync();
         }
+
+
+
         public async Task<ServiceRequest> GetServiceRequestByIdAsync(int id)
         {
             return await _context.ServiceRequest.Include(s => s.Contract).FirstOrDefaultAsync(m => m.ServiceRequestId == id);
         }
 
+
+
         public async Task UpdateAsync(ServiceRequest serviceRequest)
         {
             var manager = new Notification(serviceRequest.ContractId, serviceRequest.Status);
             _notifier.Subscribe(manager);
-            _context.Update(serviceRequest); 
             _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);
             await Conversion(serviceRequest);
+            _context.Update(serviceRequest);
             await _context.SaveChangesAsync();
             
         }
+
+
         public async Task DeleteAsync(int id) 
         {
             var serviceRequest = await GetServiceRequestByIdAsync(id);
@@ -105,6 +118,8 @@ namespace PROG7311_GLMSApp.Services
 
             await _context.SaveChangesAsync();
         }
+
+
 
         public bool ServiceRequestExists(int id)
         {

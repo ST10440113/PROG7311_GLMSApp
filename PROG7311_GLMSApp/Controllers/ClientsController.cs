@@ -106,7 +106,7 @@ namespace PROG7311_GLMSApp.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     
-                    if (!_clientService.ClientExists(client.ClientId))
+                    if (!await _clientService.ClientExists(client.ClientId))
                     {
                         return NotFound();
                     }
@@ -145,7 +145,7 @@ namespace PROG7311_GLMSApp.Controllers
             var client = await _clientService.GetClientByIdAsync(id);
             if (client != null)
             {
-                await _clientService.Delete(client.ClientId);
+                await _clientService.Delete(client);
             }
             return RedirectToAction(nameof(Index));
         }

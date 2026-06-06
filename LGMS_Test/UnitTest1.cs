@@ -31,7 +31,7 @@ namespace LGMS_Test
         public void Test2_FileTypeValidation()
         {
             //Arrange
-            ContractService contractService = new ContractService(null,null,null);          
+            ContractService contractService = new ContractService(null,null,null,null);          
             IFormFile file = new FormFile(null, 0, 0, null, "agreement.exe"); 
             bool isFileValid = false;
 

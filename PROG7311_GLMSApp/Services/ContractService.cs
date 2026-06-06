@@ -10,16 +10,21 @@ namespace PROG7311_GLMSApp.Services
 {
     public class ContractService
     {
+        private readonly HttpClient _httpClient;
+       
         private readonly PROG7311_GLMSAppContext _context;
         private readonly IContractFactory _icontractFactory;
         private List<IServiceRequestObserver> _observers = new();
         private readonly Notifier _notifier;
 
-        public ContractService(IContractFactory icontractFactory, PROG7311_GLMSAppContext context, Notifier notifier)
+        public ContractService(IContractFactory icontractFactory, PROG7311_GLMSAppContext context, 
+               Notifier notifier, HttpClient httpClient)
         {
             _icontractFactory = icontractFactory;
             _context = context;
             _notifier = notifier;
+            _httpClient = httpClient;
+            
         }
 
 
@@ -72,11 +77,10 @@ namespace PROG7311_GLMSApp.Services
                     contract.Status = "Expired";
                     await UpdateAsync(contract);
                 }
-
             }
             return contracts;
-
         }
+
         public async Task<Contract> GetContractByIdAsync(int id)
         {
             return await _context.Contract.Include(c => c.Client).FirstOrDefaultAsync(c => c.ContractId == id);
@@ -146,6 +150,5 @@ namespace PROG7311_GLMSApp.Services
                 throw new ArgumentException("Invalid file type. Only PDF files are allowed.");
             }           
         }
-
     }
 }
