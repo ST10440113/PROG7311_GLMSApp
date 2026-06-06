@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace PROG7311_GLMSApp.Migrations
+namespace API_Techmove.Migrations
 {
     /// <inheritdoc />
-    public partial class sixteenthCreate : Migration
+    public partial class secondCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

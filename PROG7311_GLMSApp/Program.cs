@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Services;
 using static PROG7311_GLMSApp.Services.ConcreteContract;
 namespace PROG7311_GLMSApp
@@ -14,9 +13,7 @@ namespace PROG7311_GLMSApp
             
             builder.Services.AddHttpContextAccessor();
 
-            builder.Services.AddDbContext<PROG7311_GLMSAppContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("PROG7311_GLMSAppContext")
-            ?? throw new InvalidOperationException("Connection string 'PROG7311_GLMSAppContext' not found.")));
+           
 
             builder.Services.AddHttpClient<CurrencyService>("ExchangeRateApi", client =>
             {

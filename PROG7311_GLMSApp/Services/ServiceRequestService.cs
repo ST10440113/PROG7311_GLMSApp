@@ -1,9 +1,9 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Build.Evaluation;
 using Microsoft.EntityFrameworkCore;
-using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 
 namespace PROG7311_GLMSApp.Services
@@ -11,16 +11,16 @@ namespace PROG7311_GLMSApp.Services
     public class ServiceRequestService
     {
         private readonly HttpClient _httpClient;
-        private readonly PROG7311_GLMSAppContext _context;
+        
         private readonly ContractContext _contractContext;
         private readonly Notifier _notifier;
         private readonly CurrencyService _currencyService;
         
 
-        public ServiceRequestService(PROG7311_GLMSAppContext context, ContractContext contractContext, 
+        public ServiceRequestService( ContractContext contractContext, 
                Notifier notifier, CurrencyService currencyService, HttpClient httpClient)
         {
-            _context = context;
+           
             _contractContext = contractContext;
             _notifier = notifier;
             _currencyService = currencyService;
@@ -37,13 +37,21 @@ namespace PROG7311_GLMSApp.Services
                 serviceRequest.ZarAmount = conversion.ConversionResult;
             }
         }
-
+        
+        
         public async Task Create(ServiceRequest serviceRequest)
         {      
             var manager = new Notification(serviceRequest.ContractId, serviceRequest.Status);
             _notifier.Subscribe(manager);
 
-            var contract = await _context.Contract.FindAsync(serviceRequest.ContractId);
+            var contractResponse = await _httpClient.GetAsync($"/api/FindContractByServiceRequestFK_Id/{serviceRequest.ContractId}");
+
+            if (!contractResponse.IsSuccessStatusCode) {
+                throw new InvalidOperationException("Contract not found");
+            }
+                
+            var contract = await contractResponse.Content.ReadFromJsonAsync<Contract>();
+
             var contractStatus = contract.Status;
             var stateChange = _contractContext.ChangeState(contractStatus);
 
@@ -51,10 +59,14 @@ namespace PROG7311_GLMSApp.Services
             {
                 await Conversion(serviceRequest);
 
-                _context.Add(serviceRequest);
-                await _context.SaveChangesAsync();
+                var response = await _httpClient.PostAsJsonAsync("/api/ServiceRequest", serviceRequest);
+                await response.Content.ReadFromJsonAsync<ServiceRequest>();
 
-              _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);           
+                if (!response.IsSuccessStatusCode) {
+                    throw new InvalidOperationException("Failed to create service request");
+                }
+                   
+                _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);           
             }
             else
             {
@@ -64,21 +76,24 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<SelectList> GetContractsWithClients()
         {
-            var contracts = await _context.Contract.Include(c => c.Client).ToListAsync();
-            var contractSelectList = contracts.Select(c => new
-            {
-                ContractId = c.ContractId,
-                listFormat = $"Contract {c.ContractId} - {c.Client.FullName}"}).ToList();
-            return new SelectList(contractSelectList, "ContractId", "listFormat");
+            var response = await _httpClient.GetAsync("/api/Contract");
+           
+                var contracts = await response.Content.ReadFromJsonAsync<List<Contract>>();
+                var contractSelectList = contracts.Select(c => new
+                {
+                    ContractId = c.ContractId,
+                    listFormat = $"Contract {c.ContractId} - {c.Client.FullName}"
+                }).ToList();
+
+                return new SelectList(contractSelectList, "ContractId", "listFormat");            
         }
 
-
-       
+            
         public async Task<SelectList> GetContractsByServiceRequestId(int serviceRequestId)
         {            
             var response = await _httpClient.GetAsync($"/api/ServiceRequest/{serviceRequestId}");
             var serviceRequest = await response.Content.ReadFromJsonAsync<ServiceRequest>();
-            return new SelectList(_context.Contract, "ContractId", "ContractId", serviceRequest.ContractId);
+            return new SelectList(new List<ServiceRequest> { serviceRequest }, "ContractId", "ContractId", serviceRequest.ContractId);
 
         }
 

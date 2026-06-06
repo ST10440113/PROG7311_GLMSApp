@@ -1,7 +1,7 @@
 ﻿using Azure.Core;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.EntityFrameworkCore;
-using PROG7311_GLMSApp.Data;
+
 using PROG7311_GLMSApp.Models;
 
 
@@ -12,7 +12,7 @@ namespace PROG7311_GLMSApp.Services
         
         private readonly HttpClient _httpClient;
        
-        public ClientService(PROG7311_GLMSAppContext context, HttpClient httpClient )
+        public ClientService( HttpClient httpClient )
         {   
             _httpClient = httpClient;
             

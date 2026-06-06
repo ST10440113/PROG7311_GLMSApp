@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 using PROG7311_GLMSApp.Services;
 
@@ -13,12 +12,12 @@ namespace PROG7311_GLMSApp.Controllers
 {
     public class ClientsController : Controller
     {
-        private readonly PROG7311_GLMSAppContext _context;
+        
         private readonly ClientService _clientService;
 
-        public ClientsController(PROG7311_GLMSAppContext context,ClientService clientService)
+        public ClientsController(ClientService clientService)
         {
-            _context = context;
+            
             _clientService = clientService;
         }
 

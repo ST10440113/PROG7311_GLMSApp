@@ -5,15 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 using PROG7311_GLMSApp.Services;
 
 namespace PROG7311_GLMSApp.Controllers
 {
     public class ServiceRequestsController : Controller
-    {
-        
+    {        
         private readonly ServiceRequestService _serviceRequestService;
 
         public ServiceRequestsController(ServiceRequestService serviceRequestService)
@@ -118,7 +116,7 @@ namespace PROG7311_GLMSApp.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     var existingServiceRequest = _serviceRequestService.ServiceRequestExists(serviceRequest.ServiceRequestId);
-                    if (!existingServiceRequest)
+                    if (!await existingServiceRequest)
                     {
                         return NotFound();
                     }
@@ -156,10 +154,14 @@ namespace PROG7311_GLMSApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-           await _serviceRequestService.DeleteAsync(id);
+           var serviceRequest = await _serviceRequestService.GetServiceRequestByIdAsync(id);
+            if (serviceRequest != null)
+            {
+                await _serviceRequestService.Delete(serviceRequest);
+            }
             return RedirectToAction(nameof(Index));
         }
-
         
+
     }
 }  

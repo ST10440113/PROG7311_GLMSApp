@@ -3,7 +3,6 @@ using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 
 
@@ -14,16 +13,15 @@ namespace PROG7311_GLMSApp.Services
     {
         private readonly HttpClient _httpClient;
        
-        private readonly PROG7311_GLMSAppContext _context;
+        
         private readonly IContractFactory _icontractFactory;
         private List<IServiceRequestObserver> _observers = new();
         private readonly Notifier _notifier;
 
-        public ContractService(IContractFactory icontractFactory, PROG7311_GLMSAppContext context, 
+        public ContractService(IContractFactory icontractFactory,
                Notifier notifier, HttpClient httpClient)
         {
             _icontractFactory = icontractFactory;
-            _context = context;
             _notifier = notifier;
             _httpClient = httpClient;
             
@@ -143,7 +141,7 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<List<Contract>> FilterByDateRange(DateOnly? startDate, DateOnly? endDate)
         {
-            var response = await _httpClient.GetAsync($"/api/Contract/DateRange?startDate={startDate}&endDate={endDate}");
+            var response = await _httpClient.GetAsync($"/api/Contract/FilterByDateRange?startDate={startDate}&endDate={endDate}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<List<Contract>>();
@@ -154,7 +152,7 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<List<Contract>> FilterByStatus(string status)
         {
-            var response = await _httpClient.GetAsync($"/api/Contract/Status?status={status}");
+            var response = await _httpClient.GetAsync($"/api/Contract/FilterByStatus?status={status}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<List<Contract>>();

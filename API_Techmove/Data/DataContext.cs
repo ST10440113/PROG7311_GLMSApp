@@ -1,5 +1,6 @@
 ﻿using API_Techmove.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace API_Techmove.Data
@@ -11,6 +12,7 @@ namespace API_Techmove.Data
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<Contract> Contract { get; set; }
-        public DbSet<ServiceRequest> ServiceRequest { get; set; }
+        public DbSet<ServiceRequest> ServiceRequests { get; set; }
     }
 }
+

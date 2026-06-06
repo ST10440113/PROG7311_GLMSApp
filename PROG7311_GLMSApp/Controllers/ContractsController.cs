@@ -4,14 +4,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 using PROG7311_GLMSApp.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.Xml;
-using System.Threading.Tasks;
+
 
 namespace PROG7311_GLMSApp.Controllers
 {
@@ -36,7 +31,7 @@ namespace PROG7311_GLMSApp.Controllers
             {
                 if (startDate != null & endDate != null)
                 {
-                    var contracts = _contractService.FilterByDateRange(startDate, endDate);
+                    var contracts = await _contractService.FilterByDateRange(startDate, endDate);
                     return View(contracts);
                 }
                 else
@@ -47,7 +42,7 @@ namespace PROG7311_GLMSApp.Controllers
 
             if (!string.IsNullOrEmpty(status))
             {
-                var contracts = _contractService.FilterByStatus(status);
+                var contracts = await _contractService.FilterByStatus(status);
                 return View(contracts);
             }
             return View(allContracts);
@@ -151,7 +146,8 @@ namespace PROG7311_GLMSApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_contractService.ContractExists(contract.ContractId))
+                    
+                     if (!await _contractService.ContractExists(contract.ContractId))
                     {
                         return NotFound();
                     }
@@ -196,7 +192,7 @@ namespace PROG7311_GLMSApp.Controllers
 
             if (contract != null)
             {
-                await _contractService.Delete(contract.ContractId);
+                await _contractService.Delete(contract);
             }
 
             return RedirectToAction(nameof(Index));

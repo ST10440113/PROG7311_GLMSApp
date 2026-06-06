@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using PROG7311_GLMSApp.Controllers;
 using PROG7311_GLMSApp.Services;
-using PROG7311_GLMSApp.Data;
 using PROG7311_GLMSApp.Models;
 using System.Collections.Generic;
 using System;
@@ -31,7 +30,7 @@ namespace LGMS_Test
         public void Test2_FileTypeValidation()
         {
             //Arrange
-            ContractService contractService = new ContractService(null,null,null,null);          
+            ContractService contractService = new ContractService(null,null,null);          
             IFormFile file = new FormFile(null, 0, 0, null, "agreement.exe"); 
             bool isFileValid = false;
 

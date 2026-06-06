@@ -23,7 +23,7 @@ namespace API_Techmove.Controllers
         [ProducesResponseType(typeof(IEnumerable<ServiceRequest>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ServiceRequest>>> GetServiceRequests()
         {
-            var serviceRequests = await _context.ServiceRequest.ToListAsync();
+            var serviceRequests = await _context.ServiceRequests.ToListAsync();
             return Ok(serviceRequests);
         }
 
@@ -34,9 +34,17 @@ namespace API_Techmove.Controllers
         [HttpGet("{id}")]
         public async Task<ServiceRequest> GetServiceRequestByIdAsync(int id)
         {
-            return await _context.ServiceRequest.FirstOrDefaultAsync(m => m.ServiceRequestId == id);
+            return await _context.ServiceRequests.FirstOrDefaultAsync(m => m.ServiceRequestId == id);
         }
 
+
+        [HttpGet("FindContractByServiceRequestFK_Id/{id}")]
+        public async Task<IActionResult> FindContractByServiceRequestFK_Id(int id)
+        {
+            var contract = await _context.Contract.FindAsync(id);
+            if (contract == null) return NotFound();
+            return Ok(contract);
+        }
 
 
 
@@ -44,7 +52,7 @@ namespace API_Techmove.Controllers
         [HttpPost]
         public async Task<ActionResult<ServiceRequest>> AddServiceRequest(ServiceRequest serviceRequest)
         {
-            _context.ServiceRequest.Add(serviceRequest);
+            _context.ServiceRequests.Add(serviceRequest);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetServiceRequestByIdAsync),
             new { id = serviceRequest.ServiceRequestId }, serviceRequest);
@@ -77,18 +85,13 @@ namespace API_Techmove.Controllers
             var serviceRequest = await GetServiceRequestByIdAsync(id);
             if (serviceRequest != null)
             {
-                _context.ServiceRequest.Remove(serviceRequest);
+                _context.ServiceRequests.Remove(serviceRequest);
             }
 
             await _context.SaveChangesAsync();
         }
 
-        [HttpGet("FindContractByServiceRequestFK_Id/{id}")]
-        public async Task<Contract> FindContractByServiceRequestFK_Id(ServiceRequest sr)
-        {
-            var contract = await _context.Contract.FindAsync(sr.ContractId);
-            return contract;
-        }
+        
     }
 }
 
