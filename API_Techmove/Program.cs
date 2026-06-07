@@ -24,22 +24,37 @@ namespace API_Techmove
 
             var app = builder.Build();
 
-           
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            using (var scope = app.Services.CreateScope())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+                var retries = 5;
+                while (retries > 0)
+                {
+                  try
+                    {
+                     db.Database.Migrate();
+                     break;
+                    }
+                  catch
+                    {
+                     retries--;
+                     Thread.Sleep(5000); 
+                    }
+                }
             }
 
-            app.UseHttpsRedirection();
+            // Configure the HTTP request pipeline.    
+            app.UseSwagger();
+            app.UseSwaggerUI();            
+
 
             app.UseAuthorization();
 
 
             app.MapControllers();
 
+            
             app.Run();
         }
     }

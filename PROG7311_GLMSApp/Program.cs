@@ -13,7 +13,7 @@ namespace PROG7311_GLMSApp
             
             builder.Services.AddHttpContextAccessor();
 
-           
+            var apiUrl = builder.Configuration["ApiUrl"] ?? "https://localhost:7256/";
 
             builder.Services.AddHttpClient<CurrencyService>("ExchangeRateApi", client =>
             {
@@ -22,17 +22,17 @@ namespace PROG7311_GLMSApp
 
             builder.Services.AddHttpClient<ContractService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7256/");                
+                client.BaseAddress = new Uri(apiUrl);                
             });
 
             builder.Services.AddHttpClient<ClientService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7256/");
+                client.BaseAddress = new Uri(apiUrl);
             });
 
             builder.Services.AddHttpClient<ServiceRequestService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7256/");
+                client.BaseAddress = new Uri(apiUrl);
             });
 
 
@@ -55,7 +55,7 @@ namespace PROG7311_GLMSApp
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+          
             app.UseRouting();
 
             app.UseAuthorization();
