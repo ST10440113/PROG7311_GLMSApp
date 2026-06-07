@@ -21,20 +21,20 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="StartDate"  class="control-label"></label>
-                <input asp-for="StartDate" type="date" class="form-control" />
+                <input asp-for="StartDate" type="date" class="form-control" style="background-color: #f5f5f0;" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <br />
             <div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" type="date" class="form-control" />
+                <input asp-for="EndDate" type="date" class="form-control" style="background-color: #f5f5f0;" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
             <br />
             
             <div class="form-group">
                 <label asp-for="ServiceLevel" class="control-label"></label>
-                <select asp-for="ServiceLevel" class="form-control" >
+                <select asp-for="ServiceLevel" class="form-control" style="background-color: #f5f5f0;">
                 <option class="dropdown-item disabled">--- Select Service Level ---</option>
                     <option value="gold" data-bs-toggle="tooltip" title="24/7 Support; Priority Handling; 1 Hour Response Time">Gold Level</option>
                     <option value="silver" data-bs-toggle="tooltip" title="12/5 Support; Standard Handling; 4 Hour Response Time">Silver Level</option>
@@ -45,16 +45,16 @@
             <br />
             <div class="form-group">
                 <label asp-for="ClientId" class="control-label">Client</label>
-                <select asp-for="ClientId" class="form-control" asp-items="ViewBag.ClientId"></select>
+                <select asp-for="ClientId" class="form-control" asp-items="ViewBag.ClientId" style="background-color: #f5f5f0;"></select>
                 <span asp-validation-for="ClientId" class="text-danger"></span>
             </div>
             <br />
             <div class="mb-3">
                 <label name="file" class="form-label">Service Level Agreement</label>
-                <input type="file" name="file" class="form-control" accept=".pdf" />
+                <input type="file" name="file" class="form-control" accept=".pdf" style="background-color: #f5f5f0;" />
                 <span asp-validation-for="FilePath" class="text-danger"></span>
             </div>
-
+            <br />
             <div>
                 <a asp-action="Index" class="btn btn-secondary">Cancel</a>
                 <button type="submit" value="Create" class="btn btn-primary">Create</button>
