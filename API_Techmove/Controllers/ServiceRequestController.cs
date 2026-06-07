@@ -31,11 +31,18 @@ namespace API_Techmove.Controllers
 
 
         // GET api/<ServiceRequestController>/5
+        
         [HttpGet("{id}")]
-        public async Task<ServiceRequest> GetServiceRequestByIdAsync(int id)
+        public async Task<IActionResult> GetServiceRequestByIdAsync(int id)
         {
-            return await _context.ServiceRequests.FirstOrDefaultAsync(m => m.ServiceRequestId == id);
+            var serviceRequest = await _context.ServiceRequests.Include(sr => sr.Contract).FirstOrDefaultAsync(m => m.ServiceRequestId == id);
+            if (serviceRequest == null)
+            {
+                return NotFound();
+            }
+            return Ok(serviceRequest);
         }
+
 
 
         [HttpGet("FindContractByServiceRequestFK_Id/{id}")]
@@ -82,18 +89,18 @@ namespace API_Techmove.Controllers
 
         // DELETE api/<ServiceRequestController>/5
         [HttpDelete("{id}")]
-        public async Task DeleteServiceRequest(int id)
+        public async Task<ActionResult> DeleteServiceRequest(int id)
         {
-            var serviceRequest = await GetServiceRequestByIdAsync(id);
+            var serviceRequest = await _context.ServiceRequests.FindAsync(id);
             if (serviceRequest != null)
             {
                 _context.ServiceRequests.Remove(serviceRequest);
             }
-
             await _context.SaveChangesAsync();
+            return Ok();
         }
 
-        
+
     }
 }
 

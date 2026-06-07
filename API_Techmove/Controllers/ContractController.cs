@@ -41,12 +41,16 @@ namespace API_Techmove.Controllers
         }
 
 
-
         // GET api/<ContractController>/5
         [HttpGet("{id}")]
-        public async Task<Contract> GetContractByIdAsync(int id)
+        public async Task<IActionResult> GetContractByIdAsync(int id)
         {
-            return await _context.Contract.Include(c => c.Client).FirstOrDefaultAsync(m => m.ContractId == id);
+            var contract = await _context.Contract.Include(c => c.Client).FirstOrDefaultAsync(m => m.ContractId == id);
+            if (contract == null)
+            {
+                return NotFound();
+            }
+            return Ok(contract);
         }
 
         // POST api/<ContractController>
@@ -73,15 +77,15 @@ namespace API_Techmove.Controllers
 
         // DELETE api/<ContractController>/5
         [HttpDelete("{id}")]
-        public async Task DeleteContract(int id)
+        public async Task<ActionResult> DeleteContract(int id)
         {
-            var contract = await GetContractByIdAsync(id);
+            var contract = await _context.Contract.FindAsync(id);
             if (contract != null)
             {
                 _context.Contract.Remove(contract);
             }
-
             await _context.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpGet("ContractExists/{id}")]

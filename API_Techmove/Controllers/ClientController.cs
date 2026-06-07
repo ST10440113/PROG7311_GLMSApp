@@ -29,9 +29,14 @@ namespace API_Techmove.Controllers
 
         // GET api/<ClientController>/5
         [HttpGet("{id}")]
-        public async Task<Client> GetClientByIdAsync(int id)
+        public async Task<IActionResult> GetClientByIdAsync(int id)
         {
-            return await _context.Clients.FirstOrDefaultAsync(m => m.ClientId == id);
+            var client = await _context.Clients.FirstOrDefaultAsync(m => m.ClientId == id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+            return Ok(client);
         }
 
         // POST api/<ClientController>
@@ -59,15 +64,15 @@ namespace API_Techmove.Controllers
 
         // DELETE api/<ClientController>/5
         [HttpDelete("{id}")]
-        public async Task DeleteClient(int id)
+        public async Task<ActionResult> DeleteClient(int id)
         {
-            var client = await GetClientByIdAsync(id);
+            var client = await _context.Clients.FindAsync(id);
             if (client != null)
             {
                 _context.Clients.Remove(client);
             }
-
             await _context.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpGet("ClientExists/{id}")]

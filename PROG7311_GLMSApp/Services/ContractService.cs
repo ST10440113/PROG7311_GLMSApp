@@ -60,7 +60,7 @@ namespace PROG7311_GLMSApp.Services
             }
             else
             {
-                var response = await _httpClient.PostAsJsonAsync("/api/Contract", newContract);
+                var response = await _httpClient.PostAsJsonAsync("api/Contract", newContract);
                  await response.Content.ReadFromJsonAsync<Contract>();
             }
 
@@ -90,7 +90,7 @@ namespace PROG7311_GLMSApp.Services
         
         public async Task<Contract?> GetContractByIdAsync(int id)
         {
-            var response = await _httpClient.GetAsync($"/api/Contract/{id}");
+            var response = await _httpClient.GetAsync($"api/Contract/{id}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<Contract>();
@@ -107,7 +107,7 @@ namespace PROG7311_GLMSApp.Services
             }
             else
             {
-                var response = await _httpClient.PutAsJsonAsync($"/api/Contract/{contract.ContractId}", contract);
+                var response = await _httpClient.PutAsJsonAsync($"api/Contract/{contract.ContractId}", contract);
                 return await response.Content.ReadFromJsonAsync<Contract>();
 
             }
@@ -115,7 +115,7 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<bool> ContractExists(int id)
         {
-            var response = await _httpClient.GetAsync($"/api/ContractExists/{id}");
+            var response = await _httpClient.GetAsync($"api/ContractExists/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var contract = await response.Content.ReadFromJsonAsync<Contract>();
@@ -127,7 +127,7 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<bool> Delete(Contract request)
         {
-            var response = await _httpClient.DeleteAsync($"/api/Contract/{request.ContractId}");
+            var response = await _httpClient.DeleteAsync($"api/Contract/{request.ContractId}");
             return response.IsSuccessStatusCode;
         }
         
@@ -141,7 +141,7 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<List<Contract>> FilterByDateRange(DateOnly? startDate, DateOnly? endDate)
         {
-            var response = await _httpClient.GetAsync($"/api/Contract/FilterByDateRange?startDate={startDate}&endDate={endDate}");
+            var response = await _httpClient.GetAsync($"api/Contract/FilterByDateRange?startDate={startDate}&endDate={endDate}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<List<Contract>>();
@@ -152,7 +152,7 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<List<Contract>> FilterByStatus(string status)
         {
-            var response = await _httpClient.GetAsync($"/api/Contract/FilterByStatus?status={status}");
+            var response = await _httpClient.GetAsync($"api/Contract/FilterByStatus?status={status}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<List<Contract>>();

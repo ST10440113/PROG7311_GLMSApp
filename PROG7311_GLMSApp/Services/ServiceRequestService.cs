@@ -43,7 +43,7 @@ namespace PROG7311_GLMSApp.Services
             var manager = new Notification(serviceRequest.ContractId, serviceRequest.Status);
             _notifier.Subscribe(manager);
 
-            var contractResponse = await _httpClient.GetAsync($"/api/ServiceRequest/FindContractByServiceRequestFK_Id/{serviceRequest.ContractId}");
+            var contractResponse = await _httpClient.GetAsync($"api/ServiceRequest/FindContractByServiceRequestFK_Id/{serviceRequest.ContractId}");
             var contract = await contractResponse.Content.ReadFromJsonAsync<Contract>();
 
             var contractStatus = contract.Status;
@@ -53,7 +53,7 @@ namespace PROG7311_GLMSApp.Services
             {
                 await Conversion(serviceRequest);
 
-                var response = await _httpClient.PostAsJsonAsync("/api/ServiceRequest", serviceRequest);              
+                var response = await _httpClient.PostAsJsonAsync("api/ServiceRequest", serviceRequest);              
                 await response.Content.ReadFromJsonAsync<ServiceRequest>();
 
                 _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);           
@@ -68,7 +68,7 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<SelectList> GetContractsWithClients()
         {
-            var response = await _httpClient.GetAsync("/api/Contract");
+            var response = await _httpClient.GetAsync("api/Contract");
            
                 var contracts = await response.Content.ReadFromJsonAsync<List<Contract>>();
                 var contractSelectList = contracts.Select(c => new
@@ -83,7 +83,7 @@ namespace PROG7311_GLMSApp.Services
             
         public async Task<SelectList> GetContractsByServiceRequestId(int serviceRequestId)
         {            
-            var response = await _httpClient.GetAsync($"/api/ServiceRequest/{serviceRequestId}");
+            var response = await _httpClient.GetAsync($"api/ServiceRequest/{serviceRequestId}");
             var serviceRequest = await response.Content.ReadFromJsonAsync<ServiceRequest>();
             return new SelectList(new List<ServiceRequest> { serviceRequest }, "ContractId", "ContractId", serviceRequest.ContractId);
 
@@ -93,7 +93,7 @@ namespace PROG7311_GLMSApp.Services
         
         public async Task<List<ServiceRequest>?> GetAllServiceRequestsAsync()
         {
-            var response = await _httpClient.GetAsync("/api/ServiceRequest");
+            var response = await _httpClient.GetAsync("api/ServiceRequest");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<List<ServiceRequest>>();
@@ -105,7 +105,7 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<ServiceRequest?> GetServiceRequestByIdAsync(int id)
         {
-            var response = await _httpClient.GetAsync($"/api/ServiceRequest/{id}");
+            var response = await _httpClient.GetAsync($"api/ServiceRequest/{id}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<ServiceRequest>();
@@ -121,7 +121,7 @@ namespace PROG7311_GLMSApp.Services
             _notifier.Subscribe(manager);
             _notifier.Notify(serviceRequest.Status, serviceRequest.ContractId);
             await Conversion(serviceRequest);
-            var response = await _httpClient.PutAsJsonAsync($"/api/ServiceRequest/{serviceRequest.ServiceRequestId}", serviceRequest);
+            var response = await _httpClient.PutAsJsonAsync($"api/ServiceRequest/{serviceRequest.ServiceRequestId}", serviceRequest);
             await response.Content.ReadFromJsonAsync<ServiceRequest>();
 
         }
@@ -129,14 +129,14 @@ namespace PROG7311_GLMSApp.Services
 
         public async Task<bool> Delete(ServiceRequest request)
         {
-            var response = await _httpClient.DeleteAsync($"/api/ServiceRequest/{request.ServiceRequestId}");
+            var response = await _httpClient.DeleteAsync($"api/ServiceRequest/{request.ServiceRequestId}");
             return response.IsSuccessStatusCode;
         }
 
 
         public async Task<bool> ServiceRequestExists(int id)
         {
-            var response = await _httpClient.GetAsync($"/api/ServiceRequestExists/{id}");
+            var response = await _httpClient.GetAsync($"api/ServiceRequestExists/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var serviceRequest = await response.Content.ReadFromJsonAsync<ServiceRequest>();

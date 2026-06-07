@@ -22,17 +22,17 @@ namespace PROG7311_GLMSApp
 
             builder.Services.AddHttpClient<ContractService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7256");                
+                client.BaseAddress = new Uri("https://localhost:7256/");                
             });
 
             builder.Services.AddHttpClient<ClientService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7256");
+                client.BaseAddress = new Uri("https://localhost:7256/");
             });
 
             builder.Services.AddHttpClient<ServiceRequestService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7256");
+                client.BaseAddress = new Uri("https://localhost:7256/");
             });
 
 
